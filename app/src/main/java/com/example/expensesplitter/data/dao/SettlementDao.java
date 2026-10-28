@@ -12,4 +12,7 @@ public interface SettlementDao {
 
     @Query("SELECT * FROM settlements WHERE groupId = :gid ORDER BY date DESC")
     LiveData<List<SettlementEntity>> ofGroup(long gid);
+    
+    @Update void update(SettlementEntity s);
+    @Query("DELETE FROM settlements WHERE id = :id") void deleteById(long id);
 }
