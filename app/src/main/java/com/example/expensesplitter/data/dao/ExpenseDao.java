@@ -24,4 +24,17 @@ public interface ExpenseDao {
 
     @Query("SELECT * FROM expense_shares WHERE expenseId IN (SELECT id FROM expenses WHERE groupId = :gid)")
     LiveData<List<ExpenseShareEntity>> sharesOfGroup(long gid);
+        @Update long updateExpense(ExpenseEntity e);
+    
+    @Query("DELETE FROM expense_shares WHERE expenseId = :expenseId")
+    void deleteShares(long expenseId);
+
+    @Transaction
+    default long updateExpenseWithShares(ExpenseEntity e, List<ExpenseShareEntity> shares) {
+        updateExpense(e);
+        deleteShares(e.id);
+        for (ExpenseShareEntity s : shares) s.expenseId = e.id;
+        insertShares(shares);
+        return e.id;
+    }
 }
