@@ -17,6 +17,31 @@ public class AddExpenseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
+                long expenseId = getIntent().getLongExtra("EXPENSE_ID", -1);
+        // যদি এডিট হয়, তবে আগের ডেটা দেখাবে
+        if (expenseId != -1) {
+            String title = getIntent().getStringExtra("EXPENSE_TITLE");
+            double amt = getIntent().getDoubleExtra("EXPENSE_AMOUNT", 0);
+            selectedDate = getIntent().getLongExtra("EXPENSE_DATE", System.currentTimeMillis());
+            etTitle.setText(title);
+            etAmount.setText(String.valueOf(amt));
+            updateDateTimeText(selectedDate);
+        }
+
+        // সেভ বাটনে ক্লিকের সময়
+        btnSave.setOnClickListener(v -> {
+            // ... ভ্যালিডেশন
+            ExpenseEntity expense = new ExpenseEntity(groupId, title, amount, 0);
+            expense.createdAt = selectedDate;
+            
+            if (expenseId != -1) {
+                expense.id = expenseId; // পুরনো আইডি সেট করা
+                vm.updateExpense(expense, shares); // ViewModel-এ যোগ করবেন
+            } else {
+                vm.addExpense(expense, shares);
+            }
+            finish();
+        });
 
         long groupId = getIntent().getLongExtra("GROUP_ID", -1);
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
