@@ -24,7 +24,7 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
         
-        RecyclerView rv = findViewById(R.id.viewPager); 
+        RecyclerView rv = findViewById(R.id.balanceRecyclerView); 
         rv.setLayoutManager(new LinearLayoutManager(this));
         BalanceAdapter adapter = new BalanceAdapter();
         rv.setAdapter(adapter);
