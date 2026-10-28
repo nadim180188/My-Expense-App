@@ -30,6 +30,44 @@ public class GroupDetailActivity extends AppCompatActivity {
         
         rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
+
+                // onCreate-এর ভেতরে
+        SettlementAdapter settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
+            @Override
+            public void onEdit(SettlementEntity s) {
+                android.content.Intent intent = new android.content.Intent(this, AddSettlementActivity.class);
+                intent.putExtra("GROUP_ID", groupId);
+                intent.putExtra("SETTLEMENT_ID", s.id);
+                intent.putExtra("SETTLEMENT_AMOUNT", s.amount);
+                intent.putExtra("SETTLEMENT_NOTE", s.note);
+                intent.putExtra("SETTLEMENT_DATE", s.date);
+                startActivity(intent);
+            }
+            @Override
+            public void onDelete(SettlementEntity s) {
+                new android.app.AlertDialog.Builder(this)
+                    .setTitle("Delete").setMessage("ডিলিট করতে চান?")
+                    .setPositiveButton("Yes", (d, w) -> vm.deleteSettlement(s.id))
+                    .setNegativeButton("No", null).show();
+            }
+        });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) rv.setAdapter(expenseAdapter);
+                else if (tab.getPosition() == 1) rv.setAdapter(settlementAdapter);
+                else rv.setAdapter(balanceAdapter);
+            }
+            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        vm.settlements(groupId).observe(this, s -> { 
+            settlements.set(s); 
+            settlementAdapter.submit(s); 
+            recompute.run(); 
+        });
         
         // onCreate এর ভেতরে, rv সেট করার পর
         TextView tvTotal = findViewById(R.id.tvTotal);
