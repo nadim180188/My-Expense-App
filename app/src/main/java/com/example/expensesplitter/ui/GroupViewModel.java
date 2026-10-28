@@ -15,6 +15,9 @@ public class GroupViewModel extends AndroidViewModel {
         super(app);
         repo = new ExpenseRepository(app);
     }
+public void updateExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
+        new Thread(() -> repo.expenses.updateExpenseWithShares(e, shares)).start();
+    }
 
     // হোম স্ক্রিনে ডেটা পাঠানোর মেথড
     public LiveData<List<GroupWithExpense>> groupsWithTotal() { 
