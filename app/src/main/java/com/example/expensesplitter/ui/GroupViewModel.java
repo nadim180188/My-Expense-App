@@ -37,4 +37,11 @@ public class GroupViewModel extends AndroidViewModel {
     public void addSettlement(SettlementEntity s) {
         new Thread(() -> repo.settlements.insert(s)).start();
     }
+        public LiveData<List<com.example.expensesplitter.model.GroupWithExpense>> groupsWithTotal() {
+        return repo.allGroupsWithTotal(); // Repository-তে এই মেথডটি বানাতে হবে
+    }
+
+    public void deleteGroup(long groupId) {
+        new Thread(() -> repo.deleteGroupById(groupId)).start();
+    }
 }
