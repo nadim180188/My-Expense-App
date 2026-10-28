@@ -3,16 +3,30 @@ package com.example.expensesplitter.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensesplitter.R;
 import com.example.expensesplitter.data.entity.ExpenseEntity;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
     private final List<ExpenseEntity> list = new ArrayList<>();
+    private final OnExpenseEditListener editListener;
+    private final OnExpenseDeleteListener deleteListener;
+
+    public interface OnExpenseEditListener { void onEdit(ExpenseEntity expense); }
+    public interface OnExpenseDeleteListener { void onDelete(ExpenseEntity expense); }
+
+    public ExpenseAdapter(OnExpenseEditListener editListener, OnExpenseDeleteListener deleteListener) {
+        this.editListener = editListener;
+        this.deleteListener = deleteListener;
+    }
 
     public void submit(List<ExpenseEntity> data) {
         list.clear();
@@ -25,29 +39,6 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
         View view = LayoutInflater.from(p.getContext()).inflate(R.layout.item_expense, p, false);
         return new VH(view);
     }
-    // ইন্টারফেস তৈরি করুন
-    public interface OnExpenseEditListener { void onEdit(ExpenseEntity expense); }
-    public interface OnExpenseDeleteListener { void onDelete(ExpenseEntity expense); }
-
-    private final OnExpenseEditListener editListener;
-    private final OnExpenseDeleteListener deleteListener;
-
-    public ExpenseAdapter(OnExpenseEditListener editListener, OnExpenseDeleteListener deleteListener) {
-        this.editListener = editListener;
-        this.deleteListener = deleteListener;
-    }
-
-// onBindViewHolder-এ ক্লিক যোগ করুন
-        h.btnEdit.setOnClickListener(v -> editListener.onEdit(e));
-        h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(e));
-
-// VH-তে আইডি অ্যাসাইন করুন
-        ImageView btnEdit, btnDelete;
-        VH(View v) {
-            // ... (আগের কোড)
-            btnEdit = v.findViewById(R.id.btnEdit);
-            btnDelete = v.findViewById(R.id.btnDelete);
-        }
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
@@ -60,12 +51,18 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
         cal.setTimeInMillis(e.createdAt);
         h.dateDay.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
         h.dateMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime()));
+
+        // ক্লিক লিসেনার (এগুলো onBindViewHolder-এর ভেতরে আছে)
+        h.btnEdit.setOnClickListener(v -> editListener.onEdit(e));
+        h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(e));
     }
 
     @Override public int getItemCount() { return list.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
         TextView title, paidBy, amount, dateDay, dateMonth;
+        ImageView btnEdit, btnDelete;
+        
         VH(View v) {
             super(v);
             title = v.findViewById(R.id.tvTitle);
@@ -73,6 +70,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
             amount = v.findViewById(R.id.tvAmount);
             dateDay = v.findViewById(R.id.tvDateDay);
             dateMonth = v.findViewById(R.id.tvDateMonth);
+            btnEdit = v.findViewById(R.id.btnEdit);
+            btnDelete = v.findViewById(R.id.btnDelete);
         }
     }
 }
