@@ -19,4 +19,8 @@ public interface GroupDao {
            "FROM groups g LEFT JOIN expenses e ON g.id = e.groupId " +
            "GROUP BY g.id ORDER BY g.createdAt DESC")
     LiveData<List<GroupWithExpense>> getAllWithTotal();
+        @Query("SELECT g.id, g.name, g.icon, g.createdAt, IFNULL(SUM(e.amount), 0) as totalExpense " +
+           "FROM groups g LEFT JOIN expenses e ON g.id = e.groupId " +
+           "GROUP BY g.id ORDER BY g.createdAt DESC")
+    LiveData<List<GroupWithExpense>> getAllWithTotal();
 }
