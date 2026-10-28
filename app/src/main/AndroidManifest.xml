@@ -5,7 +5,7 @@
         android:allowBackup="true"
         android:label="Expense Splitter"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        android:theme="@style/Theme.ExpenseSplitter">
 
         <activity android:name=".ui.MainActivity" android:exported="true">
             <intent-filter>
