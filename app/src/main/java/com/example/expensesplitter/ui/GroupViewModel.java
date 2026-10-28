@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.*;
 import com.example.expensesplitter.data.ExpenseRepository;
 import com.example.expensesplitter.data.entity.*;
+import com.example.expensesplitter.model.GroupWithExpense;
 import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
@@ -15,16 +16,24 @@ public class GroupViewModel extends AndroidViewModel {
         repo = new ExpenseRepository(app);
     }
 
-    public LiveData<List<GroupEntity>> groups() { return repo.allGroups(); }
+    // হোম স্ক্রিনে ডেটা পাঠানোর মেথড
+    public LiveData<List<GroupWithExpense>> groupsWithTotal() { 
+        return repo.allGroupsWithTotal(); 
+    }
+
+    // গ্রুপ ডিলিট করার মেথড
+    public void deleteGroup(long groupId) {
+        new Thread(() -> repo.deleteGroupById(groupId)).start();
+    }
+
     public LiveData<List<MemberEntity>> members(long gid) { return repo.membersOf(gid); }
     public LiveData<List<ExpenseEntity>> expenses(long gid) { return repo.expensesOf(gid); }
     public LiveData<List<ExpenseShareEntity>> shares(long gid) { return repo.sharesOf(gid); }
     public LiveData<List<SettlementEntity>> settlements(long gid) { return repo.settlementsOf(gid); }
 
-        public void addGroup(String name) {
+    public void addGroup(String name) {
         new Thread(() -> {
             long gid = repo.groups.insert(new GroupEntity(name));
-            // গ্রুপ তৈরির সময় স্বয়ংক্রিয়ভাবে একজন মেম্বার (আমি) যোগ হবে
             repo.members.insert(new MemberEntity(gid, "আমি")); 
         }).start();
     }
@@ -36,12 +45,5 @@ public class GroupViewModel extends AndroidViewModel {
     }
     public void addSettlement(SettlementEntity s) {
         new Thread(() -> repo.settlements.insert(s)).start();
-    }
-        public LiveData<List<com.example.expensesplitter.model.GroupWithExpense>> groupsWithTotal() {
-        return repo.allGroupsWithTotal(); // Repository-তে এই মেথডটি বানাতে হবে
-    }
-
-    public void deleteGroup(long groupId) {
-        new Thread(() -> repo.deleteGroupById(groupId)).start();
     }
 }
