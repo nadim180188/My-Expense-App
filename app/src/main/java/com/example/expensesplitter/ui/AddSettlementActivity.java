@@ -36,6 +36,23 @@ public class AddSettlementActivity extends AppCompatActivity {
             vm.addSettlement(settlement);
             Toast.makeText(this, "শোধ সেভ হয়েছে", Toast.LENGTH_SHORT).show();
             finish();
+            // AddExpenseActivity-তে নিচের মেথডটি যোগ করুন এবং etDateTime-এ ক্লিক করলে এটি কল করুন
+private void showDateTimePicker() {
+    final java.util.Calendar cal = java.util.Calendar.getInstance();
+    cal.setTimeInMillis(selectedDate);
+    
+    new android.app.DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+        cal.set(year, month, dayOfMonth);
+        
+        new android.app.TimePickerDialog(this, (timeView, hourOfDay, minute) -> {
+            cal.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
+            cal.set(java.util.Calendar.MINUTE, minute);
+            selectedDate = cal.getTimeInMillis();
+            updateDateTimeText(selectedDate);
+        }, cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE), false).show();
+        
+    }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+}
         });
     }
 }
