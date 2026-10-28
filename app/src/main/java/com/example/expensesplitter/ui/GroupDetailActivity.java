@@ -2,6 +2,7 @@ package com.example.expensesplitter.ui;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,48 +38,52 @@ public class GroupDetailActivity extends AppCompatActivity {
         rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
         
-        // ১. Expense Adapter
-        expenseAdapter = new ExpenseAdapter(
-            expense -> {
-                android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
-                intent.putExtra("GROUP_ID", groupId);
-                intent.putExtra("EXPENSE_ID", expense.id);
-                intent.putExtra("EXPENSE_TITLE", expense.title);
-                intent.putExtra("EXPENSE_AMOUNT", expense.amount);
-                intent.putExtra("EXPENSE_DATE", expense.createdAt);
-                startActivity(intent);
-            },
-            expense -> {
-                new android.app.AlertDialog.Builder(this)
-                    .setTitle("Delete Expense").setMessage("ডিলিট করতে চান?")
-                    .setPositiveButton("Yes", (d, w) -> vm.deleteExpense(expense.id))
-                    .setNegativeButton("No", null).show();
-            }
-        );
-        
-        // ২. Settlement Adapter (এখানে GroupDetailActivity.this ব্যবহার করা হয়েছে)
-        settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
-            @Override
-            public void onEdit(SettlementEntity s) {
-                android.content.Intent intent = new android.content.Intent(GroupDetailActivity.this, AddSettlementActivity.class);
-                intent.putExtra("GROUP_ID", groupId);
-                intent.putExtra("SETTLEMENT_ID", s.id);
-                intent.putExtra("SETTLEMENT_AMOUNT", s.amount);
-                intent.putExtra("SETTLEMENT_NOTE", s.note);
-                intent.putExtra("SETTLEMENT_DATE", s.date);
-                startActivity(intent);
-            }
-            @Override
-            public void onDelete(SettlementEntity s) {
-                new android.app.AlertDialog.Builder(GroupDetailActivity.this)
-                    .setTitle("Delete").setMessage("ডিলিট করতে চান?")
-                    .setPositiveButton("Yes", (d, w) -> vm.deleteSettlement(s.id))
-                    .setNegativeButton("No", null).show();
-            }
-        });
-        
-        balanceAdapter = new BalanceAdapter();
-        rv.setAdapter(expenseAdapter);
+        try {
+            // ১. Expense Adapter
+            expenseAdapter = new ExpenseAdapter(
+                expense -> {
+                    android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
+                    intent.putExtra("GROUP_ID", groupId);
+                    intent.putExtra("EXPENSE_ID", expense.id);
+                    intent.putExtra("EXPENSE_TITLE", expense.title);
+                    intent.putExtra("EXPENSE_AMOUNT", expense.amount);
+                    intent.putExtra("EXPENSE_DATE", expense.createdAt);
+                    startActivity(intent);
+                },
+                expense -> {
+                    new android.app.AlertDialog.Builder(this)
+                        .setTitle("Delete Expense").setMessage("ডিলিট করতে চান?")
+                        .setPositiveButton("Yes", (d, w) -> vm.deleteExpense(expense.id))
+                        .setNegativeButton("No", null).show();
+                }
+            );
+            
+            // ২. Settlement Adapter
+            settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
+                @Override
+                public void onEdit(SettlementEntity s) {
+                    android.content.Intent intent = new android.content.Intent(GroupDetailActivity.this, AddSettlementActivity.class);
+                    intent.putExtra("GROUP_ID", groupId);
+                    intent.putExtra("SETTLEMENT_ID", s.id);
+                    intent.putExtra("SETTLEMENT_AMOUNT", s.amount);
+                    intent.putExtra("SETTLEMENT_NOTE", s.note);
+                    intent.putExtra("SETTLEMENT_DATE", s.date);
+                    startActivity(intent);
+                }
+                @Override
+                public void onDelete(SettlementEntity s) {
+                    new android.app.AlertDialog.Builder(GroupDetailActivity.this)
+                        .setTitle("Delete").setMessage("ডিলিট করতে চান?")
+                        .setPositiveButton("Yes", (d, w) -> vm.deleteSettlement(s.id))
+                        .setNegativeButton("No", null).show();
+                }
+            });
+            
+            balanceAdapter = new BalanceAdapter();
+            rv.setAdapter(expenseAdapter);
+        } catch (Exception e) {
+            Toast.makeText(this, "Adapter Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
 
         // ৩. ট্যাব সিলেকশন
         TabLayout tabLayout = findViewById(R.id.tabLayout);
@@ -93,37 +98,41 @@ public class GroupDetailActivity extends AppCompatActivity {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // ৪. ব্যালেন্স ক্যালকুলেশন
+        // ৪. ব্যালেন্স ক্যালকুলেশন (Try-Catch সহ)
         AtomicReference<List<MemberEntity>> members = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseEntity>> expenses = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseShareEntity>> shares = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<SettlementEntity>> settlements = new AtomicReference<>(Collections.emptyList());
 
         Runnable recompute = () -> {
-            List<com.example.expensesplitter.model.MemberBalance> balances = BalanceCalculator.calculate(
-                    members.get(), shares.get(), expenses.get(), settlements.get());
-            balanceAdapter.submit(balances);
-            
-            double totalExp = 0, totalPaid = 0;
-            for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
-            for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
-            
-            double totalDue = totalExp - totalPaid;
-            tvTotal.setText("৳" + totalExp);
-            tvPaid.setText("৳" + totalPaid);
-            tvDue.setText("৳" + totalDue);
+            try {
+                List<com.example.expensesplitter.model.MemberBalance> balances = BalanceCalculator.calculate(
+                        members.get(), shares.get(), expenses.get(), settlements.get());
+                balanceAdapter.submit(balances);
+                
+                double totalExp = 0, totalPaid = 0;
+                for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
+                for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
+                
+                double totalDue = totalExp - totalPaid;
+                tvTotal.setText("৳" + totalExp);
+                tvPaid.setText("৳" + totalPaid);
+                tvDue.setText("৳" + totalDue);
+            } catch (Exception e) {
+                Toast.makeText(GroupDetailActivity.this, "Calc Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         };
 
         vm.members(groupId).observe(this, m -> { members.set(m); recompute.run(); });
         vm.expenses(groupId).observe(this, e -> { 
             expenses.set(e); 
-            expenseAdapter.submit(e); 
+            if(expenseAdapter != null) expenseAdapter.submit(e); 
             recompute.run(); 
         });
         vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
         vm.settlements(groupId).observe(this, s -> { 
             settlements.set(s); 
-            settlementAdapter.submit(s); 
+            if(settlementAdapter != null) settlementAdapter.submit(s); 
             recompute.run(); 
         });
 
