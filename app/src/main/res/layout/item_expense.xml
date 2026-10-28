@@ -4,56 +4,58 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:orientation="horizontal"
-        android:padding="12dp"
+        android:padding="16dp"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- তারিখের বক্স -->
+        <!-- তারিখ এবং সময়ের বক্স -->
         <LinearLayout
             android:orientation="vertical"
-            android:background="#F0F0F0"
-            android:padding="8dp"
+            android:background="#F4F4F4"
+            android:padding="10dp"
             android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView android:id="@+id/tvDateDay" android:textSize="16sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/tvDateMonth" android:textSize="12sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            app:cornerRadius="12dp"> <!-- যদি MaterialCardView না হয়ে LinearLayout হয়, তবে shape drawable লাগবে, আপাতত ব্যাকগ্রাউন্ড কালার দিলাম -->
+            <TextView android:id="@+id/tvDateDay" android:textSize="18sp" android:textStyle="bold" android:textColor="#2D2D2D" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <TextView android:id="@+id/tvDateMonth" android:textSize="12sp" android:textColor="#777777" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <!-- খরচের নাম -->
+        <!-- খরচের নাম এবং সময় -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_weight="1"
             android:layout_marginStart="16dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content">
-            <TextView android:id="@+id/tvTitle" android:textSize="16sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/tvPaidBy" android:textSize="12sp" android:textColor="#777777" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <TextView android:id="@+id/tvTitle" android:textSize="16sp" android:textStyle="bold" android:textColor="#2D2D2D" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp">
+                <TextView android:id="@+id/tvPaidBy" android:textSize="12sp" android:textColor="#777777" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/tvTime" android:textSize="12sp" android:textColor="#777777" android:layout_marginStart="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
-        
-        <!-- টাকার পরিমাণ -->
-        <TextView
-            android:id="@+id/tvAmount"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-                <LinearLayout
+
+        <!-- টাকার পরিমাণ এবং অ্যাকশন বাটন -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="end">
             
             <TextView
                 android:id="@+id/tvAmount"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="#2D2D2D"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -63,15 +65,15 @@
                 android:layout_marginTop="8dp">
                 <ImageView
                     android:id="@+id/btnEdit"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@android:drawable/ic_menu_edit"
                     android:layout_marginEnd="12dp"
                     app:tint="#6C63FF"/>
                 <ImageView
                     android:id="@+id/btnDelete"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@android:drawable/ic_menu_delete"
                     app:tint="#FF5252"/>
             </LinearLayout>
