@@ -25,6 +25,29 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
         View view = LayoutInflater.from(p.getContext()).inflate(R.layout.item_expense, p, false);
         return new VH(view);
     }
+    // ইন্টারফেস তৈরি করুন
+    public interface OnExpenseEditListener { void onEdit(ExpenseEntity expense); }
+    public interface OnExpenseDeleteListener { void onDelete(ExpenseEntity expense); }
+
+    private final OnExpenseEditListener editListener;
+    private final OnExpenseDeleteListener deleteListener;
+
+    public ExpenseAdapter(OnExpenseEditListener editListener, OnExpenseDeleteListener deleteListener) {
+        this.editListener = editListener;
+        this.deleteListener = deleteListener;
+    }
+
+// onBindViewHolder-এ ক্লিক যোগ করুন
+        h.btnEdit.setOnClickListener(v -> editListener.onEdit(e));
+        h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(e));
+
+// VH-তে আইডি অ্যাসাইন করুন
+        ImageView btnEdit, btnDelete;
+        VH(View v) {
+            // ... (আগের কোড)
+            btnEdit = v.findViewById(R.id.btnEdit);
+            btnDelete = v.findViewById(R.id.btnDelete);
+        }
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
