@@ -8,4 +8,5 @@ public class GroupWithExpense {
     public String icon;
     public long createdAt;
     public double totalExpense;
+    public double dueAmount;
 }
