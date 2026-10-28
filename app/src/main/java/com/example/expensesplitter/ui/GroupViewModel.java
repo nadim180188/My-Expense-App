@@ -55,7 +55,8 @@ public class GroupViewModel extends AndroidViewModel {
     // ★ নতুন যোগ করা মেথড
     public void deleteExpense(long expenseId) {
         new Thread(() -> repo.deleteExpenseById(expenseId)).start();
-    @Update void update(SettlementEntity s);
-    @Query("DELETE FROM settlements WHERE id = :id") void deleteById(long id);
+    public void deleteSettlement(long id) {
+        new Thread(() -> repo.settlements.deleteById(id)).start();
+    }
     }
 }
