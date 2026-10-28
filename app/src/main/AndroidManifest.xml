@@ -17,5 +17,6 @@
         <activity android:name=".ui.GroupDetailActivity" />
         <activity android:name=".ui.AddExpenseActivity" />
         <activity android:name=".ui.AddSettlementActivity" />
+        <activity android:name=".ui.CreateGroupActivity" />
     </application>
 </manifest>
