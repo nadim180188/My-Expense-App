@@ -13,8 +13,8 @@
         <com.google.android.material.tabs.TabItem android:text="Settlements"/>
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/balanceRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
