@@ -9,9 +9,12 @@ import java.util.List;
 @Dao
 public interface GroupDao {
     @Insert long insert(GroupEntity g);
-    @Delete void delete(GroupEntity g);
+    
+    // গ্রুপ ডিলিট করার কুয়েরি
+    @Query("DELETE FROM groups WHERE id = :groupId")
+    void deleteById(long groupId);
 
-    // নতুন কুয়েরি: গ্রুপের সাথে তার মোট খরচ বের করা
+    // গ্রুপের সাথে তার মোট খরচ বের করার কুয়েরি
     @Query("SELECT g.id, g.name, g.createdAt, IFNULL(SUM(e.amount), 0) as totalExpense " +
            "FROM groups g LEFT JOIN expenses e ON g.id = e.groupId " +
            "GROUP BY g.id ORDER BY g.createdAt DESC")
