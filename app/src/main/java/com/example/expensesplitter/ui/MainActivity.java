@@ -18,19 +18,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        vm.groupsWithTotal().observe(this, groups -> {
-        adapter.submit(groups);
-            
-            // গ্রাফের জন্য আসল ডেটা হিসাব
-            double totalPaid = 0;
-            double totalDue = 0;
-            for (com.example.expensesplitter.model.GroupWithExpense g : groups) {
-                totalPaid += (g.totalExpense - g.dueAmount); // Paid = Total - Due
-                totalDue += g.dueAmount;
-            }
-            PieChartView pieChart = findViewById(R.id.pieChart);
-            pieChart.setData((float) totalPaid, (float) totalDue);
-        });
 
         // ১. ViewModel Initialize
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
@@ -58,14 +45,22 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
-        // ৩. গ্রুপ লিস্ট অবজার্ভ করা
-        vm.groupsWithTotal().observe(this, adapter::submit);
+        // ৩. গ্রুপ লিস্ট এবং গ্রাফ আপডেট
+        vm.groupsWithTotal().observe(this, groups -> {
+            adapter.submit(groups);
+            
+            // গ্রাফের জন্য আসল ডেটা হিসাব
+            double totalPaid = 0;
+            double totalDue = 0;
+            for (com.example.expensesplitter.model.GroupWithExpense g : groups) {
+                totalPaid += (g.totalExpense - g.dueAmount); // Paid = Total - Due
+                totalDue += g.dueAmount;
+            }
+            PieChartView pieChart = findViewById(R.id.pieChart);
+            pieChart.setData((float) totalPaid, (float) totalDue);
+        });
 
-        // ৪. পাই চার্ট অ্যানিমেশন
-        PieChartView pieChart = findViewById(R.id.pieChart);
-        pieChart.animateChart();
-
-        // ৫. + বাটনের কাজ (CreateGroupActivity ওপেন করবে)
+        // ৪. + বাটনের কাজ (CreateGroupActivity ওপেন করবে)
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> {
             startActivity(new Intent(this, CreateGroupActivity.class));
