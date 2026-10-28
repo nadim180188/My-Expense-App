@@ -15,7 +15,8 @@ public class GroupViewModel extends AndroidViewModel {
         super(app);
         repo = new ExpenseRepository(app);
     }
-public void updateExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
+
+    public void updateExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
         new Thread(() -> repo.expenses.updateExpenseWithShares(e, shares)).start();
     }
 
@@ -28,7 +29,9 @@ public void updateExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
     public void deleteGroup(long groupId) {
         new Thread(() -> repo.deleteGroupById(groupId)).start();
     }
-        public void addCustomGroup(GroupEntity group) {
+
+    // নতুন গ্রুপ তৈরির মেথড (CreateGroupActivity থেকে কল হবে)
+    public void addCustomGroup(GroupEntity group) {
         new Thread(() -> {
             long gid = repo.groups.insert(group);
             repo.members.insert(new MemberEntity(gid, "আমি")); 
@@ -40,18 +43,14 @@ public void updateExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
     public LiveData<List<ExpenseShareEntity>> shares(long gid) { return repo.sharesOf(gid); }
     public LiveData<List<SettlementEntity>> settlements(long gid) { return repo.settlementsOf(gid); }
 
-    public void addGroup(String name) {
-        new Thread(() -> {
-            long gid = repo.groups.insert(new GroupEntity(name));
-            repo.members.insert(new MemberEntity(gid, "আমি")); 
-        }).start();
-    }
     public void addMember(long gid, String name) {
         new Thread(() -> repo.members.insert(new MemberEntity(gid, name))).start();
     }
+    
     public void addExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
         new Thread(() -> repo.expenses.insertWithShares(e, shares)).start();
     }
+    
     public void addSettlement(SettlementEntity s) {
         new Thread(() -> repo.settlements.insert(s)).start();
     }
