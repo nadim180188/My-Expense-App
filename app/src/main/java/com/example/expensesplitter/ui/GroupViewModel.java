@@ -21,8 +21,12 @@ public class GroupViewModel extends AndroidViewModel {
     public LiveData<List<ExpenseShareEntity>> shares(long gid) { return repo.sharesOf(gid); }
     public LiveData<List<SettlementEntity>> settlements(long gid) { return repo.settlementsOf(gid); }
 
-    public void addGroup(String name) {
-        new Thread(() -> repo.groups.insert(new GroupEntity(name))).start();
+        public void addGroup(String name) {
+        new Thread(() -> {
+            long gid = repo.groups.insert(new GroupEntity(name));
+            // গ্রুপ তৈরির সময় স্বয়ংক্রিয়ভাবে একজন মেম্বার (আমি) যোগ হবে
+            repo.members.insert(new MemberEntity(gid, "আমি")); 
+        }).start();
     }
     public void addMember(long gid, String name) {
         new Thread(() -> repo.members.insert(new MemberEntity(gid, name))).start();
