@@ -17,6 +17,20 @@
             android:hint="কত টাকা শোধ করলেন? (৳)" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- ★ নতুন যুক্ত করা ডেট ও টাইম ফিল্ড -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"
+            android:hint="তারিখ ও সময় নির্বাচন করুন" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
