@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton("No", null).show();
             }
         );
+                FloatingActionButton fab = findViewById(R.id.fabAdd);
+        fab.setOnClickListener(v -> {
+            startActivity(new Intent(this, CreateGroupActivity.class));
+        });
         
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
