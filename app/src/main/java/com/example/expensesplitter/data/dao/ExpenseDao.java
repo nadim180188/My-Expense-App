@@ -37,4 +37,6 @@ public interface ExpenseDao {
         insertShares(shares);
         return e.id;
     }
+        @Query("DELETE FROM expenses WHERE id = :expenseId")
+    void deleteById(long expenseId);
 }
