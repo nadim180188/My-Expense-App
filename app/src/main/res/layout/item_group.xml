@@ -26,6 +26,12 @@
                 android:layout_height="wrap_content"
                 android:text="🛍️"
                 android:textSize="28sp"/>
+            <TextView
+                android:id="@+id/tvGroupIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🛍️"
+                android:textSize="28sp"/>
         </LinearLayout>
 
         <LinearLayout
