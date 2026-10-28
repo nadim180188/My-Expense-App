@@ -18,14 +18,6 @@ public class GroupDetailActivity extends AppCompatActivity {
     private ExpenseAdapter expenseAdapter;
     private BalanceAdapter balanceAdapter;
 
-            // ... (আগের কোড)
-        
-        // শেয়ার পিডিএফ বাটন
-        findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
-            // পিডিএফ বানানোর জন্য এক্সপেন্স লিস্টটি নিতে হবে
-            PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get());
-        });    
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,14 +28,37 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
         
-        rv = findViewById(R.id.recyclerView); // XML এর আইডি
+        rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
         
-        expenseAdapter = new ExpenseAdapter();
+        // ১. অ্যাডাপ্টার তৈরি
+        expenseAdapter = new ExpenseAdapter(
+            // এডিট লিসেনার
+            expense -> {
+                android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
+                intent.putExtra("GROUP_ID", groupId);
+                intent.putExtra("EXPENSE_ID", expense.id);
+                intent.putExtra("EXPENSE_TITLE", expense.title);
+                intent.putExtra("EXPENSE_AMOUNT", expense.amount);
+                intent.putExtra("EXPENSE_DATE", expense.createdAt);
+                startActivity(intent);
+            },
+            // ডিলিট লিসেনার
+            expense -> {
+                new android.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Expense")
+                    .setMessage("আপনি কি নিশ্চিতভাবে এই খরচটি ডিলিট করতে চান?")
+                    .setPositiveButton("Yes", (d, w) -> {
+                        vm.deleteExpense(expense.id); // ViewModel-এ যোগ করতে হবে
+                    })
+                    .setNegativeButton("No", null).show();
+            }
+        );
+        
         balanceAdapter = new BalanceAdapter();
+        rv.setAdapter(expenseAdapter);
 
-        rv.setAdapter(expenseAdapter); // ডিফল্ট Expense
-
+        // ২. ট্যাব সিলেকশন
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -58,6 +73,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
+        // ৩. ব্যালেন্স ক্যালকুলেশন
         AtomicReference<List<MemberEntity>> members = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseEntity>> expenses = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseShareEntity>> shares = new AtomicReference<>(Collections.emptyList());
@@ -75,7 +91,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
         vm.settlements(groupId).observe(this, s -> { settlements.set(s); recompute.run(); });
 
-        // + বাটনের কাজ
+        // ৪. + বাটন
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
             String[] options = {"খরচ যোগ করুন (Expense)", "টাকা শোধ করুন (Settlement)"};
             new android.app.AlertDialog.Builder(this)
@@ -91,6 +107,11 @@ public class GroupDetailActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }).show();
+        });
+
+        // ৫. PDF শেয়ার বাটন (এটি onCreate-এর ভেতরে আছে)
+        findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
+            PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get());
         });
     }
 }
