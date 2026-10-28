@@ -11,14 +11,14 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- হেডার (Welcome) -->
+        <!-- হেডার -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="16dp">
 
             <ImageView
                 android:layout_width="50dp"
@@ -50,11 +50,30 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- অ্যানিমেটেড গ্রাফ (স্ক্রিনের ১/৪ ভাগ) -->
+        <com.example.expensesplitter.ui.PieChartView
+            android:id="@+id/pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- গ্রুপ লিস্টের হেডার -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Groups"
+            android:textColor="@color/text_dark"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
         <!-- গ্রুপ লিস্ট -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2.5"
             android:clipToPadding="false"/>
 
     </LinearLayout>
