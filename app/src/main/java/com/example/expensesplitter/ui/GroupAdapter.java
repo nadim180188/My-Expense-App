@@ -37,11 +37,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.VH> {
         return new VH(view);
     }
 
-    @Override
+        @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
         GroupWithExpense g = list.get(pos);
         h.name.setText(g.name);
-        h.expense.setText(String.format("Total Expense : ৳%.0f", g.totalExpense));
+        // ★ এখানে "মোট খরচ" এর বদলে "বাকি" দেখানো হচ্ছে
+        h.expense.setText(String.format("বাকি : ৳%.0f", g.dueAmount));
         
         if (g.icon != null) {
             h.icon.setText(g.icon);
