@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,16 +22,30 @@ public class MainActivity extends AppCompatActivity {
 
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
         RecyclerView rv = findViewById(R.id.recyclerView);
-        GroupAdapter adapter = new GroupAdapter(group -> {
-            Intent i = new Intent(this, GroupDetailActivity.class);
-            i.putExtra("GROUP_ID", group.id);
-            i.putExtra("GROUP_NAME", group.name);
-            startActivity(i);
-        });
+        
+        GroupAdapter adapter = new GroupAdapter(
+            group -> {
+                Intent i = new Intent(this, GroupDetailActivity.class);
+                i.putExtra("GROUP_ID", group.id);
+                i.putExtra("GROUP_NAME", group.name);
+                startActivity(i);
+            },
+            group -> {
+                new AlertDialog.Builder(this)
+                    .setTitle("Delete Group")
+                    .setMessage("আপনি কি নিশ্চিতভাবে এই গ্রুপটি ডিলিট করতে চান?")
+                    .setPositiveButton("Yes", (d, w) -> {
+                        vm.deleteGroup(group.id); // নিচে ViewModel-এ মেথড যোগ করব
+                        Toast.makeText(this, "গ্রুপ ডিলিট হয়েছে", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", null).show();
+            }
+        );
+        
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
-        vm.groups().observe(this, adapter::submit);
+        vm.groupsWithTotal().observe(this, adapter::submit);
 
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> {
