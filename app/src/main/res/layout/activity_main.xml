@@ -39,7 +39,8 @@
                     android:text="Welcome Back!"
                     android:textColor="@color/text_light"
                     android:textSize="14sp"/>
-                <TextView
+                    <TextView
+                    android:id="@+id/tvGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hello, Good Morning"
