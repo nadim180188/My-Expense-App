@@ -3,7 +3,6 @@ package com.example.expensesplitter.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,18 +18,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // ... (আগের কোড)
-        vm.groupsWithTotal().observe(this, adapter::submit);
 
-        // গ্রাফ অ্যানিমেশন শুরু
-        PieChartView pieChart = findViewById(R.id.pieChart);
-        pieChart.animateChart();
-
-// ... (আগের কোড)
-
+        // ১. ViewModel Initialize
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
+
+        // ২. RecyclerView সেটআপ
         RecyclerView rv = findViewById(R.id.recyclerView);
-        
         GroupAdapter adapter = new GroupAdapter(
             group -> {
                 Intent i = new Intent(this, GroupDetailActivity.class);
@@ -43,32 +36,26 @@ public class MainActivity extends AppCompatActivity {
                     .setTitle("Delete Group")
                     .setMessage("আপনি কি নিশ্চিতভাবে এই গ্রুপটি ডিলিট করতে চান?")
                     .setPositiveButton("Yes", (d, w) -> {
-                        vm.deleteGroup(group.id); // নিচে ViewModel-এ মেথড যোগ করব
+                        vm.deleteGroup(group.id);
                         Toast.makeText(this, "গ্রুপ ডিলিট হয়েছে", Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("No", null).show();
             }
         );
-                FloatingActionButton fab = findViewById(R.id.fabAdd);
-        fab.setOnClickListener(v -> {
-            startActivity(new Intent(this, CreateGroupActivity.class));
-        });
-        
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
+        // ৩. গ্রুপ লিস্ট অবজার্ভ করা
         vm.groupsWithTotal().observe(this, adapter::submit);
 
+        // ৪. পাই চার্ট অ্যানিমেশন
+        PieChartView pieChart = findViewById(R.id.pieChart);
+        pieChart.animateChart();
+
+        // ৫. + বাটনের কাজ (CreateGroupActivity ওপেন করবে)
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> {
-            EditText et = new EditText(this);
-            et.setHint("Group Name");
-            new AlertDialog.Builder(this)
-                    .setTitle("New Group")
-                    .setView(et)
-                    .setPositiveButton("Create", (d, w) -> vm.addGroup(et.getText().toString()))
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            startActivity(new Intent(this, CreateGroupActivity.class));
         });
     }
 }
