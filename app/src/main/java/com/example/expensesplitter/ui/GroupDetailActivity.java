@@ -44,10 +44,22 @@ public class GroupDetailActivity extends AppCompatActivity {
                 // + বাটনের কাজ
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
             // আপাতত আমরা সরাসরি Expense যোগ করার স্ক্রিনে নিয়ে যাচ্ছি
-            // (পরে আমরা ট্যাব অনুযায়ী এটি পরিবর্তন করব)
-            android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
-            intent.putExtra("GROUP_ID", groupId);
-            startActivity(intent);
+                    // + বাটনের কাজ (খরচ এবং শোধ দুটোই যোগ করার অপশন)
+        findViewById(R.id.fabAdd).setOnClickListener(v -> {
+            String[] options = {"খরচ যোগ করুন (Expense)", "টাকা শোধ করুন (Settlement)"};
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("কী যোগ করতে চান?")
+                    .setItems(options, (dialog, which) -> {
+                        if (which == 0) {
+                            android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
+                            intent.putExtra("GROUP_ID", groupId);
+                            startActivity(intent);
+                        } else {
+                            android.content.Intent intent = new android.content.Intent(this, AddSettlementActivity.class);
+                            intent.putExtra("GROUP_ID", groupId);
+                            startActivity(intent);
+                        }
+                    }).show();
         });
     }
 }
