@@ -3,6 +3,8 @@
 
     <application
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="Expense Splitter"
         android:supportsRtl="true"
         android:theme="@style/Theme.ExpenseSplitter">
@@ -18,6 +20,7 @@
         <activity android:name=".ui.AddExpenseActivity" />
         <activity android:name=".ui.AddSettlementActivity" />
         <activity android:name=".ui.CreateGroupActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.expensesplitter.fileprovider"
