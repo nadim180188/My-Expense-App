@@ -31,12 +31,24 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- PDF শেয়ার বাটন (নতুন যোগ করা) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSharePdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share PDF"
+        android:textSize="12sp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:backgroundTint="#6C63FF"/>
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.tabs.TabItem android:text="Expense"/>
-        <com.google.android.material.tabs.TabItem android:text="Settlement"/> <!-- নতুন ট্যাব -->
+        <com.google.android.material.tabs.TabItem android:text="Settlement"/>
         <com.google.android.material.tabs.TabItem android:text="Balance"/>
     </com.google.android.material.tabs.TabLayout>
 
