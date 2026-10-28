@@ -16,14 +16,11 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- আইকন বক্স -->
         <LinearLayout
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@color/pastel_orange"
-            android:gravity="center"
-            android:orientation="vertical">
-            <!-- এখানে ইমোজি বা আইকন দিতে পারেন, আপাতত একটি ছবি দিলাম -->
+            android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,30 +28,34 @@
                 android:textSize="28sp"/>
         </LinearLayout>
 
-        <!-- গ্রুপের নাম এবং খরচ -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/tvGroupName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Group Name"
                 android:textColor="@color/text_dark"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
-
             <TextView
+                android:id="@+id/tvTotalExpense"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Total Expense : ৳0"
                 android:textColor="@color/text_light"
                 android:textSize="14sp"/>
         </LinearLayout>
+
+        <!-- ডিলিট আইকন -->
+        <ImageView
+            android:id="@+id/btnDelete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="#FF5252"/>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
