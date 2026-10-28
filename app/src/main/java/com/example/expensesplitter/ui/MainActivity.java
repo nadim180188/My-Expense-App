@@ -3,6 +3,7 @@ package com.example.expensesplitter.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensesplitter.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     private GroupViewModel vm;
@@ -19,10 +21,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ১. ViewModel Initialize
+        // ★ ১. সময় অনুযায়ী গ্রিটিংস সেট করা
+        updateGreeting();
+
+        // ২. ViewModel Initialize
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
 
-        // ২. RecyclerView সেটআপ
+        // ৩. RecyclerView সেটআপ
         RecyclerView rv = findViewById(R.id.recyclerView);
         GroupAdapter adapter = new GroupAdapter(
             group -> {
@@ -45,25 +50,44 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
-        // ৩. গ্রুপ লিস্ট এবং গ্রাফ আপডেট
+        // ৪. গ্রুপ লিস্ট এবং গ্রাফ আপডেট
         vm.groupsWithTotal().observe(this, groups -> {
             adapter.submit(groups);
             
-            // গ্রাফের জন্য আসল ডেটা হিসাব
             double totalPaid = 0;
             double totalDue = 0;
             for (com.example.expensesplitter.model.GroupWithExpense g : groups) {
-                totalPaid += (g.totalExpense - g.dueAmount); // Paid = Total - Due
+                totalPaid += (g.totalExpense - g.dueAmount); 
                 totalDue += g.dueAmount;
             }
             PieChartView pieChart = findViewById(R.id.pieChart);
             pieChart.setData((float) totalPaid, (float) totalDue);
         });
 
-        // ৪. + বাটনের কাজ (CreateGroupActivity ওপেন করবে)
+        // ৫. + বাটনের কাজ
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> {
             startActivity(new Intent(this, CreateGroupActivity.class));
         });
+    }
+
+    // ★ গ্রিটিংস আপডেট করার মেথড
+    private void updateGreeting() {
+        TextView tvGreeting = findViewById(R.id.tvGreeting);
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        String greeting;
+        if (timeOfDay >= 0 && timeOfDay < 12) {
+            greeting = "Hello, Good Morning ☀️";
+        } else if (timeOfDay >= 12 && timeOfDay < 17) {
+            greeting = "Hello, Good Afternoon 🌤️";
+        } else if (timeOfDay >= 17 && timeOfDay < 21) {
+            greeting = "Hello, Good Evening 🌆";
+        } else {
+            greeting = "Hello, Good Night 🌙";
+        }
+
+        tvGreeting.setText(greeting);
     }
 }
