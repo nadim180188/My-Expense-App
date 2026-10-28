@@ -52,11 +52,12 @@ public class GroupViewModel extends AndroidViewModel {
         new Thread(() -> repo.settlements.insert(s)).start();
     }
 
-    // ★ নতুন যোগ করা মেথড
     public void deleteExpense(long expenseId) {
         new Thread(() -> repo.deleteExpenseById(expenseId)).start();
+    }
+
+    // ★ নতুন যোগ করা মেথড (এটি ক্লাসের ভেতরে রাখতে হবে)
     public void deleteSettlement(long id) {
         new Thread(() -> repo.settlements.deleteById(id)).start();
-    }
     }
 }
