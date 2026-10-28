@@ -41,5 +41,13 @@ public class GroupDetailActivity extends AppCompatActivity {
         vm.expenses(groupId).observe(this, e -> { expenses.set(e); recompute.run(); });
         vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
         vm.settlements(groupId).observe(this, s -> { settlements.set(s); recompute.run(); });
+                // + বাটনের কাজ
+        findViewById(R.id.fabAdd).setOnClickListener(v -> {
+            // আপাতত আমরা সরাসরি Expense যোগ করার স্ক্রিনে নিয়ে যাচ্ছি
+            // (পরে আমরা ট্যাব অনুযায়ী এটি পরিবর্তন করব)
+            android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
+            intent.putExtra("GROUP_ID", groupId);
+            startActivity(intent);
+        });
     }
 }
