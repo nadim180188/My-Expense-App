@@ -26,9 +26,14 @@ public class ExpenseRepository {
         return groups.getAllWithTotal();
     }
 
-    // ডিলিট করার মেথড
+    // গ্রুপ ডিলিট করার মেথড
     public void deleteGroupById(long groupId) {
         groups.deleteById(groupId);
+    }
+
+    // ★ নতুন যোগ করা খরচ ডিলিট করার মেথড
+    public void deleteExpenseById(long expenseId) {
+        expenses.deleteById(expenseId);
     }
 
     public LiveData<List<MemberEntity>> membersOf(long gid) { return members.ofGroup(gid); }
