@@ -20,17 +20,14 @@ public class GroupViewModel extends AndroidViewModel {
         new Thread(() -> repo.expenses.updateExpenseWithShares(e, shares)).start();
     }
 
-    // হোম স্ক্রিনে ডেটা পাঠানোর মেথড
     public LiveData<List<GroupWithExpense>> groupsWithTotal() { 
         return repo.allGroupsWithTotal(); 
     }
 
-    // গ্রুপ ডিলিট করার মেথড
     public void deleteGroup(long groupId) {
         new Thread(() -> repo.deleteGroupById(groupId)).start();
     }
 
-    // নতুন গ্রুপ তৈরির মেথড (CreateGroupActivity থেকে কল হবে)
     public void addCustomGroup(GroupEntity group) {
         new Thread(() -> {
             long gid = repo.groups.insert(group);
@@ -53,5 +50,10 @@ public class GroupViewModel extends AndroidViewModel {
     
     public void addSettlement(SettlementEntity s) {
         new Thread(() -> repo.settlements.insert(s)).start();
+    }
+
+    // ★ নতুন যোগ করা মেথড
+    public void deleteExpense(long expenseId) {
+        new Thread(() -> repo.deleteExpenseById(expenseId)).start();
     }
 }
