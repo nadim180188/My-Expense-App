@@ -13,9 +13,10 @@ public interface GroupDao {
     @Query("DELETE FROM groups WHERE id = :groupId")
     void deleteById(long groupId);
 
-    // মেথডটি যেন শুধু একবার থাকে
-    @Query("SELECT g.id, g.name, g.icon, g.createdAt, IFNULL(SUM(e.amount), 0) as totalExpense " +
-           "FROM groups g LEFT JOIN expenses e ON g.id = e.groupId " +
-           "GROUP BY g.id ORDER BY g.createdAt DESC")
+    @Query("SELECT g.id, g.name, g.icon, g.createdAt, " +
+           "(IFNULL((SELECT SUM(amount) FROM expenses WHERE groupId = g.id), 0) - " +
+           "IFNULL((SELECT SUM(amount) FROM settlements WHERE groupId = g.id AND type = 'PAID'), 0)) as dueAmount, " +
+           "IFNULL((SELECT SUM(amount) FROM expenses WHERE groupId = g.id), 0) as totalExpense " +
+           "FROM groups g ORDER BY g.createdAt DESC")
     LiveData<List<GroupWithExpense>> getAllWithTotal();
 }
