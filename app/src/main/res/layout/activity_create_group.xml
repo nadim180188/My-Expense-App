@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Category & Icon"
+            android:text="Choose Category &amp; Icon"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
             
