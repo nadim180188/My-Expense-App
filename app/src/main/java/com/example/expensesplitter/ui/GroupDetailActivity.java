@@ -1,6 +1,7 @@
 package com.example.expensesplitter.ui;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ public class GroupDetailActivity extends AppCompatActivity {
     private long groupId;
     private RecyclerView rv;
     private ExpenseAdapter expenseAdapter;
+    private SettlementAdapter settlementAdapter;
     private BalanceAdapter balanceAdapter;
 
     @Override
@@ -27,31 +29,35 @@ public class GroupDetailActivity extends AppCompatActivity {
         setTitle(getIntent().getStringExtra("GROUP_NAME"));
 
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
-
-       // onCreate এর ভেতরে, rv সেট করার পর
+        
+        // সামারি ভিউগুলো
         TextView tvTotal = findViewById(R.id.tvTotal);
         TextView tvPaid = findViewById(R.id.tvPaid);
         TextView tvDue = findViewById(R.id.tvDue);
 
-        vm.expenses(groupId).observe(this, e -> {
-            expenses.set(e); 
-            expenseAdapter.submit(e); 
-            recompute.run(); 
-            double total = 0; for(ExpenseEntity ex : e) total += ex.amount;
-            tvTotal.setText("৳" + total);
-        });
-        vm.settlements(groupId).observe(this, s -> { 
-            settlements.set(s); 
-            recompute.run(); 
-            double paid = 0; for(SettlementEntity se : s) if("PAID".equals(se.type)) paid += se.amount;
-            tvPaid.setText("৳" + paid);
-        });
-        
         rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
-
-      // onCreate-এর ভেতরে
-        SettlementAdapter settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
+        
+        // ১. অ্যাডাপ্টার তৈরি
+        expenseAdapter = new ExpenseAdapter(
+            expense -> {
+                android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
+                intent.putExtra("GROUP_ID", groupId);
+                intent.putExtra("EXPENSE_ID", expense.id);
+                intent.putExtra("EXPENSE_TITLE", expense.title);
+                intent.putExtra("EXPENSE_AMOUNT", expense.amount);
+                intent.putExtra("EXPENSE_DATE", expense.createdAt);
+                startActivity(intent);
+            },
+            expense -> {
+                new android.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Expense").setMessage("ডিলিট করতে চান?")
+                    .setPositiveButton("Yes", (d, w) -> vm.deleteExpense(expense.id))
+                    .setNegativeButton("No", null).show();
+            }
+        );
+        
+        settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
             @Override
             public void onEdit(SettlementEntity s) {
                 android.content.Intent intent = new android.content.Intent(this, AddSettlementActivity.class);
@@ -70,7 +76,12 @@ public class GroupDetailActivity extends AppCompatActivity {
                     .setNegativeButton("No", null).show();
             }
         });
+        
+        balanceAdapter = new BalanceAdapter();
+        rv.setAdapter(expenseAdapter);
 
+        // ২. ট্যাব সিলেকশন
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -82,80 +93,27 @@ public class GroupDetailActivity extends AppCompatActivity {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        vm.settlements(groupId).observe(this, s -> { 
-            settlements.set(s); 
-            settlementAdapter.submit(s); 
-            recompute.run(); 
-        });
-        
-        // onCreate এর ভেতরে, rv সেট করার পর
-        TextView tvTotal = findViewById(R.id.tvTotal);
-        TextView tvPaid = findViewById(R.id.tvPaid);
-        TextView tvDue = findViewById(R.id.tvDue);
-
-        vm.expenses(groupId).observe(this, e -> {
-            expenses.set(e); 
-            expenseAdapter.submit(e); 
-            recompute.run(); 
-            double total = 0; for(ExpenseEntity ex : e) total += ex.amount;
-            tvTotal.setText("৳" + total);
-        });
-        vm.settlements(groupId).observe(this, s -> { 
-            settlements.set(s); 
-            recompute.run(); 
-            double paid = 0; for(SettlementEntity se : s) if("PAID".equals(se.type)) paid += se.amount;
-            tvPaid.setText("৳" + paid);
-        });
-        // ১. অ্যাডাপ্টার তৈরি
-        expenseAdapter = new ExpenseAdapter(
-            // এডিট লিসেনার
-            expense -> {
-                android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
-                intent.putExtra("GROUP_ID", groupId);
-                intent.putExtra("EXPENSE_ID", expense.id);
-                intent.putExtra("EXPENSE_TITLE", expense.title);
-                intent.putExtra("EXPENSE_AMOUNT", expense.amount);
-                intent.putExtra("EXPENSE_DATE", expense.createdAt);
-                startActivity(intent);
-            },
-            // ডিলিট লিসেনার
-            expense -> {
-                new android.app.AlertDialog.Builder(this)
-                    .setTitle("Delete Expense")
-                    .setMessage("আপনি কি নিশ্চিতভাবে এই খরচটি ডিলিট করতে চান?")
-                    .setPositiveButton("Yes", (d, w) -> {
-                        vm.deleteExpense(expense.id); // ViewModel-এ যোগ করতে হবে
-                    })
-                    .setNegativeButton("No", null).show();
-            }
-        );
-        
-        balanceAdapter = new BalanceAdapter();
-        rv.setAdapter(expenseAdapter);
-
-        // ২. ট্যাব সিলেকশন
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    rv.setAdapter(expenseAdapter);
-                } else {
-                    rv.setAdapter(balanceAdapter);
-                }
-            }
-            @Override public void onTabUnselected(TabLayout.Tab tab) {}
-            @Override public void onTabReselected(TabLayout.Tab tab) {}
-        });
-
         // ৩. ব্যালেন্স ক্যালকুলেশন
         AtomicReference<List<MemberEntity>> members = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseEntity>> expenses = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseShareEntity>> shares = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<SettlementEntity>> settlements = new AtomicReference<>(Collections.emptyList());
 
-        Runnable recompute = () -> balanceAdapter.submit(BalanceCalculator.calculate(
-                members.get(), shares.get(), expenses.get(), settlements.get()));
+        Runnable recompute = () -> {
+            List<com.example.expensesplitter.model.MemberBalance> balances = BalanceCalculator.calculate(
+                    members.get(), shares.get(), expenses.get(), settlements.get());
+            balanceAdapter.submit(balances);
+            
+            // সামারি টেক্সট আপডেট
+            double totalExp = 0, totalPaid = 0, totalDue = 0;
+            for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
+            for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
+            
+            totalDue = totalExp - totalPaid;
+            tvTotal.setText("৳" + totalExp);
+            tvPaid.setText("৳" + totalPaid);
+            tvDue.setText("৳" + totalDue);
+        };
 
         vm.members(groupId).observe(this, m -> { members.set(m); recompute.run(); });
         vm.expenses(groupId).observe(this, e -> { 
@@ -164,7 +122,11 @@ public class GroupDetailActivity extends AppCompatActivity {
             recompute.run(); 
         });
         vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
-        vm.settlements(groupId).observe(this, s -> { settlements.set(s); recompute.run(); });
+        vm.settlements(groupId).observe(this, s -> { 
+            settlements.set(s); 
+            settlementAdapter.submit(s); 
+            recompute.run(); 
+        });
 
         // ৪. + বাটন
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
@@ -184,9 +146,8 @@ public class GroupDetailActivity extends AppCompatActivity {
                     }).show();
         });
 
-                // ৫. PDF শেয়ার বাটন (এটি onCreate-এর ভেতরে আছে)
+        // ৫. PDF শেয়ার বাটন
         findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
-            // এখানে settlements লিস্টটিও পাঠাতে হবে
             PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get(), settlements.get());
         });
     }
