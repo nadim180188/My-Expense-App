@@ -19,6 +19,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // ... (আগের কোড)
+        vm.groupsWithTotal().observe(this, adapter::submit);
+
+        // গ্রাফ অ্যানিমেশন শুরু
+        PieChartView pieChart = findViewById(R.id.pieChart);
+        pieChart.animateChart();
+
+// ... (আগের কোড)
 
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
         RecyclerView rv = findViewById(R.id.recyclerView);
