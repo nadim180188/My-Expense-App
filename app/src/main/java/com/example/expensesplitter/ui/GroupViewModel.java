@@ -25,6 +25,12 @@ public class GroupViewModel extends AndroidViewModel {
     public void deleteGroup(long groupId) {
         new Thread(() -> repo.deleteGroupById(groupId)).start();
     }
+        public void addCustomGroup(GroupEntity group) {
+        new Thread(() -> {
+            long gid = repo.groups.insert(group);
+            repo.members.insert(new MemberEntity(gid, "আমি")); 
+        }).start();
+    }
 
     public LiveData<List<MemberEntity>> members(long gid) { return repo.membersOf(gid); }
     public LiveData<List<ExpenseEntity>> expenses(long gid) { return repo.expensesOf(gid); }
