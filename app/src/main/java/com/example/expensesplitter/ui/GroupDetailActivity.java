@@ -109,9 +109,10 @@ public class GroupDetailActivity extends AppCompatActivity {
                     }).show();
         });
 
-        // ৫. PDF শেয়ার বাটন (এটি onCreate-এর ভেতরে আছে)
+                // ৫. PDF শেয়ার বাটন (এটি onCreate-এর ভেতরে আছে)
         findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
-            PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get());
+            // এখানে settlements লিস্টটিও পাঠাতে হবে
+            PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get(), settlements.get());
         });
     }
 }
