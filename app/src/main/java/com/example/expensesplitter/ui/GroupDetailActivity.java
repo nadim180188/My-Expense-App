@@ -30,7 +30,6 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
         
-        // সামারি ভিউগুলো
         TextView tvTotal = findViewById(R.id.tvTotal);
         TextView tvPaid = findViewById(R.id.tvPaid);
         TextView tvDue = findViewById(R.id.tvDue);
@@ -38,7 +37,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
         
-        // ১. অ্যাডাপ্টার তৈরি
+        // ১. Expense Adapter
         expenseAdapter = new ExpenseAdapter(
             expense -> {
                 android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
@@ -57,10 +56,11 @@ public class GroupDetailActivity extends AppCompatActivity {
             }
         );
         
+        // ২. Settlement Adapter (এখানে GroupDetailActivity.this ব্যবহার করা হয়েছে)
         settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
             @Override
             public void onEdit(SettlementEntity s) {
-                android.content.Intent intent = new android.content.Intent(this, AddSettlementActivity.class);
+                android.content.Intent intent = new android.content.Intent(GroupDetailActivity.this, AddSettlementActivity.class);
                 intent.putExtra("GROUP_ID", groupId);
                 intent.putExtra("SETTLEMENT_ID", s.id);
                 intent.putExtra("SETTLEMENT_AMOUNT", s.amount);
@@ -70,7 +70,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             }
             @Override
             public void onDelete(SettlementEntity s) {
-                new android.app.AlertDialog.Builder(this)
+                new android.app.AlertDialog.Builder(GroupDetailActivity.this)
                     .setTitle("Delete").setMessage("ডিলিট করতে চান?")
                     .setPositiveButton("Yes", (d, w) -> vm.deleteSettlement(s.id))
                     .setNegativeButton("No", null).show();
@@ -80,7 +80,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         balanceAdapter = new BalanceAdapter();
         rv.setAdapter(expenseAdapter);
 
-        // ২. ট্যাব সিলেকশন
+        // ৩. ট্যাব সিলেকশন
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -93,7 +93,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // ৩. ব্যালেন্স ক্যালকুলেশন
+        // ৪. ব্যালেন্স ক্যালকুলেশন
         AtomicReference<List<MemberEntity>> members = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseEntity>> expenses = new AtomicReference<>(Collections.emptyList());
         AtomicReference<List<ExpenseShareEntity>> shares = new AtomicReference<>(Collections.emptyList());
@@ -104,12 +104,11 @@ public class GroupDetailActivity extends AppCompatActivity {
                     members.get(), shares.get(), expenses.get(), settlements.get());
             balanceAdapter.submit(balances);
             
-            // সামারি টেক্সট আপডেট
-            double totalExp = 0, totalPaid = 0, totalDue = 0;
+            double totalExp = 0, totalPaid = 0;
             for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
             for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
             
-            totalDue = totalExp - totalPaid;
+            double totalDue = totalExp - totalPaid;
             tvTotal.setText("৳" + totalExp);
             tvPaid.setText("৳" + totalPaid);
             tvDue.setText("৳" + totalDue);
@@ -128,7 +127,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             recompute.run(); 
         });
 
-        // ৪. + বাটন
+        // ৫. + বাটন
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
             String[] options = {"খরচ যোগ করুন (Expense)", "টাকা শোধ করুন (Settlement)"};
             new android.app.AlertDialog.Builder(this)
@@ -146,7 +145,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     }).show();
         });
 
-        // ৫. PDF শেয়ার বাটন
+        // ৬. PDF শেয়ার বাটন
         findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
             PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get(), settlements.get());
         });
