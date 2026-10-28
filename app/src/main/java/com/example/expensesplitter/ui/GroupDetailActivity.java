@@ -41,10 +41,8 @@ public class GroupDetailActivity extends AppCompatActivity {
         vm.expenses(groupId).observe(this, e -> { expenses.set(e); recompute.run(); });
         vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
         vm.settlements(groupId).observe(this, s -> { settlements.set(s); recompute.run(); });
-                // + বাটনের কাজ
-        findViewById(R.id.fabAdd).setOnClickListener(v -> {
-            // আপাতত আমরা সরাসরি Expense যোগ করার স্ক্রিনে নিয়ে যাচ্ছি
-                    // + বাটনের কাজ (খরচ এবং শোধ দুটোই যোগ করার অপশন)
+
+        // + বাটনের কাজ (খরচ এবং শোধ দুটোই যোগ করার অপশন)
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
             String[] options = {"খরচ যোগ করুন (Expense)", "টাকা শোধ করুন (Settlement)"};
             new android.app.AlertDialog.Builder(this)
