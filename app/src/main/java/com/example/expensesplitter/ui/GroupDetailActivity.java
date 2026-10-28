@@ -1,5 +1,6 @@
 package com.example.expensesplitter.ui;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +41,6 @@ public class GroupDetailActivity extends AppCompatActivity {
             rv = findViewById(R.id.recyclerView);
             rv.setLayoutManager(new LinearLayoutManager(this));
             
-            // ১. Expense Adapter
             expenseAdapter = new ExpenseAdapter(
                 expense -> {
                     android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
@@ -59,7 +59,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                 }
             );
             
-            // ২. Settlement Adapter
             settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
                 @Override
                 public void onEdit(SettlementEntity s) {
@@ -83,7 +82,6 @@ public class GroupDetailActivity extends AppCompatActivity {
             balanceAdapter = new BalanceAdapter();
             rv.setAdapter(expenseAdapter);
 
-            // ৩. ট্যাব সিলেকশন
             TabLayout tabLayout = findViewById(R.id.tabLayout);
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
@@ -96,7 +94,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                 @Override public void onTabReselected(TabLayout.Tab tab) {}
             });
 
-            // ৪. ব্যালেন্স ক্যালকুলেশন
             AtomicReference<List<MemberEntity>> members = new AtomicReference<>(Collections.emptyList());
             AtomicReference<List<ExpenseEntity>> expenses = new AtomicReference<>(Collections.emptyList());
             AtomicReference<List<ExpenseShareEntity>> shares = new AtomicReference<>(Collections.emptyList());
@@ -112,9 +109,11 @@ public class GroupDetailActivity extends AppCompatActivity {
                 for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
                 
                 double totalDue = totalExp - totalPaid;
-                tvTotal.setText("৳" + totalExp);
-                tvPaid.setText("৳" + totalPaid);
-                tvDue.setText("৳" + totalDue);
+                
+                // ★ এখানে অ্যানিমেশন মেথড কল করা হলো
+                animateValue(tvTotal, totalExp);
+                animateValue(tvPaid, totalPaid);
+                animateValue(tvDue, totalDue);
             };
 
             vm.members(groupId).observe(this, m -> { members.set(m); recompute.run(); });
@@ -130,7 +129,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                 recompute.run(); 
             });
 
-            // ৫. + বাটন
             findViewById(R.id.fabAdd).setOnClickListener(v -> {
                 String[] options = {"খরচ যোগ করুন (Expense)", "টাকা শোধ করুন (Settlement)"};
                 new android.app.AlertDialog.Builder(this)
@@ -148,7 +146,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                         }).show();
             });
 
-            // ৬. PDF শেয়ার বাটন
             findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
                 try {
                     PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get(), settlements.get());
@@ -158,9 +155,26 @@ public class GroupDetailActivity extends AppCompatActivity {
             });
             
         } catch (Exception e) {
-            // যদি কোনো কারণে অ্যাপ ক্র্যাশ করে, তবে এই মেসেজটি দেখাবে
             Toast.makeText(this, "Activity Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    // ★ ০ থেকে আসল সংখ্যায় কাউন্ট হওয়ার অ্যানিমেশন মেথড
+    private void animateValue(TextView textView, double targetValue) {
+        // যদি আগের কোনো অ্যানিমেশন চলে, তবে সেটা বন্ধ করে দিবে
+        if (textView.getTag() instanceof ValueAnimator) {
+            ((ValueAnimator) textView.getTag()).cancel();
+        }
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, (float) targetValue);
+        animator.setDuration(1000); // ১ সেকেন্ড সময় নিবে
+        animator.addUpdateListener(animation -> {
+            float animatedValue = (float) animation.getAnimatedValue();
+            textView.setText(String.format(Locale.US, "৳%.1f", animatedValue));
+        });
+        
+        textView.setTag(animator);
+        animator.start();
     }
 }
