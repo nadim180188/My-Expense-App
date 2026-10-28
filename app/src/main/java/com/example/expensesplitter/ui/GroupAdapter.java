@@ -23,6 +23,32 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.VH> {
         this.clickListener = clickListener;
         this.deleteListener = deleteListener;
     }
+        @Override
+    public void onBindViewHolder(@NonNull VH h, int pos) {
+        GroupWithExpense g = list.get(pos);
+        h.name.setText(g.name);
+        h.expense.setText(String.format("Total Expense : ৳%.0f", g.totalExpense));
+        
+        // আইকন সেট করা (যদি খালি থাকে তবে ডিফল্ট)
+        if (g.icon != null) {
+            h.icon.setText(g.icon);
+        } else {
+            h.icon.setText("🛍️");
+        }
+
+        h.itemView.setOnClickListener(v -> clickListener.onClick(g));
+        h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(g));
+    }
+
+// VH ক্লাসে আইকন ভেরিয়েবল যোগ করুন
+        TextView name, expense, icon;
+        VH(View v) {
+            super(v);
+            name = v.findViewById(R.id.tvGroupName);
+            expense = v.findViewById(R.id.tvTotalExpense);
+            icon = v.findViewById(R.id.tvGroupIcon);
+            btnDelete = v.findViewById(R.id.btnDelete);
+        }
 
     public void submit(List<GroupWithExpense> data) {
         list.clear();
