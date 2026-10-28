@@ -27,11 +27,30 @@ public class GroupDetailActivity extends AppCompatActivity {
         setTitle(getIntent().getStringExtra("GROUP_NAME"));
 
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
+
+       // onCreate এর ভেতরে, rv সেট করার পর
+        TextView tvTotal = findViewById(R.id.tvTotal);
+        TextView tvPaid = findViewById(R.id.tvPaid);
+        TextView tvDue = findViewById(R.id.tvDue);
+
+        vm.expenses(groupId).observe(this, e -> {
+            expenses.set(e); 
+            expenseAdapter.submit(e); 
+            recompute.run(); 
+            double total = 0; for(ExpenseEntity ex : e) total += ex.amount;
+            tvTotal.setText("৳" + total);
+        });
+        vm.settlements(groupId).observe(this, s -> { 
+            settlements.set(s); 
+            recompute.run(); 
+            double paid = 0; for(SettlementEntity se : s) if("PAID".equals(se.type)) paid += se.amount;
+            tvPaid.setText("৳" + paid);
+        });
         
         rv = findViewById(R.id.recyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-                // onCreate-এর ভেতরে
+      // onCreate-এর ভেতরে
         SettlementAdapter settlementAdapter = new SettlementAdapter(new SettlementAdapter.OnSettlementClickListener() {
             @Override
             public void onEdit(SettlementEntity s) {
