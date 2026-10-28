@@ -1,5 +1,7 @@
 package com.example.expensesplitter.ui;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,46 +11,61 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.expensesplitter.R;
 import com.example.expensesplitter.data.entity.ExpenseEntity;
 import com.example.expensesplitter.data.entity.ExpenseShareEntity;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AddExpenseActivity extends AppCompatActivity {
+    private long selectedDate = System.currentTimeMillis();
+    private EditText etDateTime;
+    private long expenseId = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
-                long expenseId = getIntent().getLongExtra("EXPENSE_ID", -1);
-        // যদি এডিট হয়, তবে আগের ডেটা দেখাবে
+
+        long groupId = getIntent().getLongExtra("GROUP_ID", -1);
+        expenseId = getIntent().getLongExtra("EXPENSE_ID", -1);
+        
+        GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
+
+        EditText etTitle = findViewById(R.id.etTitle);
+        EditText etAmount = findViewById(R.id.etAmount);
+        etDateTime = findViewById(R.id.etDateTime);
+        Button btnSave = findViewById(R.id.btnSave);
+
+        // এডিট মোড চেক
         if (expenseId != -1) {
             String title = getIntent().getStringExtra("EXPENSE_TITLE");
             double amt = getIntent().getDoubleExtra("EXPENSE_AMOUNT", 0);
             selectedDate = getIntent().getLongExtra("EXPENSE_DATE", System.currentTimeMillis());
             etTitle.setText(title);
             etAmount.setText(String.valueOf(amt));
-            updateDateTimeText(selectedDate);
         }
 
-        // সেভ বাটনে ক্লিকের সময়
-        btnSave.setOnClickListener(v -> {
-            // ... ভ্যালিডেশন
-            ExpenseEntity expense = new ExpenseEntity(groupId, title, amount, 0);
-            expense.createdAt = selectedDate;
+        updateDateTimeText(selectedDate);
+
+        // ডেট এবং টাইম পিকার
+        etDateTime.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(selectedDate);
             
-            if (expenseId != -1) {
-                expense.id = expenseId; // পুরনো আইডি সেট করা
-                vm.updateExpense(expense, shares); // ViewModel-এ যোগ করবেন
-            } else {
-                vm.addExpense(expense, shares);
-            }
-            finish();
+            new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+                cal.set(year, month, dayOfMonth);
+                
+                new TimePickerDialog(this, (timeView, hourOfDay, minute) -> {
+                    cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    cal.set(Calendar.MINUTE, minute);
+                    selectedDate = cal.getTimeInMillis();
+                    updateDateTimeText(selectedDate);
+                }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show();
+                
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
         });
-
-        long groupId = getIntent().getLongExtra("GROUP_ID", -1);
-        GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
-
-        EditText etTitle = findViewById(R.id.etTitle);
-        EditText etAmount = findViewById(R.id.etAmount);
-        Button btnSave = findViewById(R.id.btnSave);
 
         btnSave.setOnClickListener(v -> {
             String title = etTitle.getText().toString();
@@ -59,33 +76,24 @@ public class AddExpenseActivity extends AppCompatActivity {
             }
             double amount = Double.parseDouble(amtStr);
             
-            // এখানে আমরা ধরে নিচ্ছি আপনি নিজেই সব খরচ দিচ্ছেন, তাই paidByMemberId = 0 (বা যেকোনো ডামি আইডি)
             ExpenseEntity expense = new ExpenseEntity(groupId, title, amount, 0);
+            expense.createdAt = selectedDate;
             
-            // মেম্বার না থাকায় আমরা একটি ডামি শেয়ার তৈরি করছি (যাতে অ্যাপ ক্র্যাশ না করে)
             List<ExpenseShareEntity> shares = new ArrayList<>();
             shares.add(new ExpenseShareEntity(0, 0, amount));
 
-            vm.addExpense(expense, shares);
-            Toast.makeText(this, "খরচ সেভ হয়েছে", Toast.LENGTH_SHORT).show();
+            if (expenseId != -1) {
+                expense.id = expenseId;
+                vm.updateExpense(expense, shares); // ViewModel-এ এই মেথডটি আছে কিনা নিশ্চিত করুন
+            } else {
+                vm.addExpense(expense, shares);
+            }
             finish();
-            // AddExpenseActivity-তে নিচের মেথডটি যোগ করুন এবং etDateTime-এ ক্লিক করলে এটি কল করুন
-private void showDateTimePicker() {
-    final java.util.Calendar cal = java.util.Calendar.getInstance();
-    cal.setTimeInMillis(selectedDate);
-    
-    new android.app.DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-        cal.set(year, month, dayOfMonth);
-        
-        new android.app.TimePickerDialog(this, (timeView, hourOfDay, minute) -> {
-            cal.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
-            cal.set(java.util.Calendar.MINUTE, minute);
-            selectedDate = cal.getTimeInMillis();
-            updateDateTimeText(selectedDate);
-        }, cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE), false).show();
-        
-    }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
-}
         });
+    }
+
+    private void updateDateTimeText(long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
+        etDateTime.setText(sdf.format(new Date(time)));
     }
 }
