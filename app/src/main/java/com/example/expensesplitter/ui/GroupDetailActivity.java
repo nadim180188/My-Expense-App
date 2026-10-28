@@ -18,6 +18,14 @@ public class GroupDetailActivity extends AppCompatActivity {
     private ExpenseAdapter expenseAdapter;
     private BalanceAdapter balanceAdapter;
 
+            // ... (আগের কোড)
+        
+        // শেয়ার পিডিএফ বাটন
+        findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
+            // পিডিএফ বানানোর জন্য এক্সপেন্স লিস্টটি নিতে হবে
+            PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get());
+        });    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
