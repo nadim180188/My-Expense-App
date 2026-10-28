@@ -3,22 +3,28 @@ package com.example.expensesplitter.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensesplitter.R;
-import com.example.expensesplitter.data.entity.GroupEntity;
+import com.example.expensesplitter.model.GroupWithExpense;
 import java.util.*;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.VH> {
-    private final List<GroupEntity> list = new ArrayList<>();
-    private final OnGroupClickListener listener;
+    private final List<GroupWithExpense> list = new ArrayList<>();
+    private final OnGroupClickListener clickListener;
+    private final OnGroupDeleteListener deleteListener;
 
-    public interface OnGroupClickListener { void onClick(GroupEntity group); }
+    public interface OnGroupClickListener { void onClick(GroupWithExpense group); }
+    public interface OnGroupDeleteListener { void onDelete(GroupWithExpense group); }
 
-    public GroupAdapter(OnGroupClickListener listener) { this.listener = listener; }
+    public GroupAdapter(OnGroupClickListener clickListener, OnGroupDeleteListener deleteListener) {
+        this.clickListener = clickListener;
+        this.deleteListener = deleteListener;
+    }
 
-    public void submit(List<GroupEntity> data) {
+    public void submit(List<GroupWithExpense> data) {
         list.clear();
         list.addAll(data);
         notifyDataSetChanged();
@@ -32,15 +38,25 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
-        GroupEntity g = list.get(pos);
+        GroupWithExpense g = list.get(pos);
         h.name.setText(g.name);
-        h.itemView.setOnClickListener(v -> listener.onClick(g));
+        h.expense.setText(String.format("Total Expense : ৳%.0f", g.totalExpense));
+        h.itemView.setOnClickListener(v -> clickListener.onClick(g));
+        
+        // ডিলিট বাটনের কাজ
+        h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(g));
     }
 
     @Override public int getItemCount() { return list.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView name;
-        VH(View v) { super(v); name = v.findViewById(R.id.tvGroupName); }
+        TextView name, expense;
+        ImageView btnDelete;
+        VH(View v) {
+            super(v);
+            name = v.findViewById(R.id.tvGroupName);
+            expense = v.findViewById(R.id.tvTotalExpense);
+            btnDelete = v.findViewById(R.id.btnDelete);
+        }
     }
 }
