@@ -15,14 +15,16 @@ public class BalanceCalculator {
         for (MemberEntity m : members) {
             double share = 0, paid = 0, settled = 0;
 
-            for (ExpenseShareEntity s : shares)
-                if (s.memberId == m.id) share += s.shareAmount;
+            for (ExpenseShareEntity s : shares) {
+                // s.memberId == 0 মানে ডামি আইডি, সেটাও এই মেম্বারের সাথে যোগ হবে
+                if (s.memberId == m.id || s.memberId == 0) share += s.shareAmount;
+            }
 
             for (ExpenseEntity e : expenses)
-                if (e.paidByMemberId == m.id) paid += e.amount;
+                if (e.paidByMemberId == m.id || e.paidByMemberId == 0) paid += e.amount;
 
             for (SettlementEntity st : settlements) {
-                if (st.memberId != m.id) continue;
+                if (st.memberId != m.id && st.memberId != 0) continue;
                 if ("PAID".equals(st.type)) settled += st.amount;
                 else settled -= st.amount;
             }
