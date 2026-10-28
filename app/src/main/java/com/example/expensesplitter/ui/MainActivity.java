@@ -18,6 +18,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        vm.groupsWithTotal().observe(this, groups -> {
+        adapter.submit(groups);
+            
+            // গ্রাফের জন্য আসল ডেটা হিসাব
+            double totalPaid = 0;
+            double totalDue = 0;
+            for (com.example.expensesplitter.model.GroupWithExpense g : groups) {
+                totalPaid += (g.totalExpense - g.dueAmount); // Paid = Total - Due
+                totalDue += g.dueAmount;
+            }
+            PieChartView pieChart = findViewById(R.id.pieChart);
+            pieChart.setData((float) totalPaid, (float) totalDue);
+        });
 
         // ১. ViewModel Initialize
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
