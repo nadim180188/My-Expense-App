@@ -8,16 +8,16 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.material.tabs.TabItem android:text="Expenses"/>
-        <com.google.android.material.tabs.TabItem android:text="Balances"/>
-        <com.google.android.material.tabs.TabItem android:text="Settlements"/>
+        <com.google.android.material.tabs.TabItem android:text="Expense"/>
+        <com.google.android.material.tabs.TabItem android:text="Balance"/>
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/balanceRecyclerView"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:padding="8dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
