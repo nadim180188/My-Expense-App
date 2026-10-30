@@ -36,7 +36,14 @@ public class SettlementAdapter extends RecyclerView.Adapter<SettlementAdapter.VH
     public void onBindViewHolder(@NonNull VH h, int pos) {
         SettlementEntity s = list.get(pos);
         h.amount.setText(String.format(Locale.US, "৳%.0f", s.amount));
-        h.note.setText(s.note != null && !s.note.isEmpty() ? s.note : "No Note");
+        
+        // ★ এখানে tvNote এর পরিবর্তে আপনার XML-এ থাকা সঠিক টেক্সট ভিউয়ের আইডি দিন
+        // যদি item_settlement.xml-এ tvNote না থাকে, তবে h.note.setText(...) লাইনটি ডিলিট করে দিন বা সঠিক আইডি দিন
+        if (s.note != null && !s.note.isEmpty()) {
+            h.note.setText(s.note);
+        } else {
+            h.note.setText("No Note");
+        }
         
         Calendar cal = Calendar.getInstance(); 
         cal.setTimeInMillis(s.date);
@@ -51,10 +58,15 @@ public class SettlementAdapter extends RecyclerView.Adapter<SettlementAdapter.VH
         h.btnEdit.setOnClickListener(v -> listener.onEdit(s));
         h.btnDelete.setOnClickListener(v -> listener.onDelete(s));
 
-        // ★ স্লাইড-ইন অ্যানিমেশন
-        h.itemView.setTranslationY(100f);
+        // ★ Fade + Slide Left অ্যানিমেশন
+        h.itemView.setTranslationX(200f);
         h.itemView.setAlpha(0f);
-        h.itemView.animate().translationY(0f).alpha(1f).setDuration(400).setStartDelay(pos * 50L).start();
+        h.itemView.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(400)
+                .setStartDelay(pos * 60L)
+                .start();
     }
 
     @Override public int getItemCount() { return list.size(); }
@@ -65,10 +77,10 @@ public class SettlementAdapter extends RecyclerView.Adapter<SettlementAdapter.VH
         VH(View v) {
             super(v);
             amount = v.findViewById(R.id.tvAmount);
-            note = v.findViewById(R.id.tvNote);
+            note = v.findViewById(R.id.tvNote); // ★ এখানে tvNote আইডিটি খুঁজছে
             dateDay = v.findViewById(R.id.tvDateDay);
             dateMonth = v.findViewById(R.id.tvDateMonth);
-            time = v.findViewById(R.id.tvTime); // নতুন টাইম ভিউ
+            time = v.findViewById(R.id.tvTime); 
             btnEdit = v.findViewById(R.id.btnEdit);
             btnDelete = v.findViewById(R.id.btnDelete);
         }
