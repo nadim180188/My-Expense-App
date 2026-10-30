@@ -3,7 +3,7 @@ package com.example.expensesplitter.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText; // ★ এই ইমপোর্টটি মিসিং ছিল
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +22,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ১. সময় অনুযায়ী গ্রিটিংস সেট করা
         updateGreeting();
+
+        // ২. ViewModel Initialize
         vm = new ViewModelProvider(this).get(GroupViewModel.class);
 
+        // ৩. RecyclerView সেটআপ
         RecyclerView rv = findViewById(R.id.recyclerView);
         GroupAdapter adapter = new GroupAdapter(
             group -> {
@@ -47,16 +51,19 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
         
-        // সার্চ বার লজিক
+        // ৪. সার্চ বার লজিক
         EditText etSearch = findViewById(R.id.etSearch);
-        etSearch.addTextChangedListener(new android.text.TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s); 
-            }
-            @Override public void afterTextChanged(android.text.Editable s) {}
-        });
+        if (etSearch != null) {
+            etSearch.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    adapter.getFilter().filter(s);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
 
+        // ৫. গ্রুপ লিস্ট এবং গ্রাফ আপডেট
         vm.groupsWithTotal().observe(this, groups -> {
             adapter.submit(groups);
             
@@ -70,12 +77,19 @@ public class MainActivity extends AppCompatActivity {
             pieChart.setData((float) totalPaid, (float) totalDue);
         });
 
+        // ৬. + বাটনের কাজ (CreateGroupActivity ওপেন করবে)
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> {
             startActivity(new Intent(this, CreateGroupActivity.class));
         });
+
+        // ৭. ★ ক্যাটাগরি ম্যানেজমেন্ট বাটনের কাজ
+        findViewById(R.id.btnManageCategory).setOnClickListener(v -> {
+            startActivity(new Intent(this, ManageCategoryActivity.class));
+        });
     }
 
+    // গ্রিটিংস আপডেট করার মেথড
     private void updateGreeting() {
         TextView tvGreeting = findViewById(R.id.tvGreeting);
         Calendar c = Calendar.getInstance();
