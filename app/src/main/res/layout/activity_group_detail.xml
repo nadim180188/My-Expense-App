@@ -64,6 +64,15 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:backgroundTint="#6C63FF"/>
+     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSettleAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settle All"
+        android:textSize="12sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        app:backgroundTint="#4CAF50"/>
         <!-- সার্চ বার -->
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
