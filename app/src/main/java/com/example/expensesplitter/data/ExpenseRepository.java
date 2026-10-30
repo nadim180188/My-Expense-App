@@ -4,6 +4,8 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 import com.example.expensesplitter.data.dao.*;
 import com.example.expensesplitter.data.entity.*;
+import com.example.expensesplitter.model.CategorySum;
+import com.example.expensesplitter.model.DateSum;
 import com.example.expensesplitter.model.GroupWithExpense;
 import java.util.List;
 
@@ -13,13 +15,6 @@ public class ExpenseRepository {
     public final ExpenseDao expenses;
     public final SettlementDao settlements;
 
-     public LiveData<List<com.example.expensesplitter.model.DateSum>> getDateSums(long gid) {
-        return expenses.getDateSums(gid);
-    }
-    public LiveData<List<com.example.expensesplitter.model.CategorySum>> getCategorySums(long gid) {
-        return expenses.getCategorySums(gid);
-    }
-
     public ExpenseRepository(Context ctx) {
         AppDatabase db = AppDatabase.get(ctx);
         groups = db.groupDao();
@@ -28,23 +23,28 @@ public class ExpenseRepository {
         settlements = db.settlementDao();
     }
 
-    // হোম স্ক্রিনের জন্য টোটাল সহ গ্রুপ লিস্ট
     public LiveData<List<GroupWithExpense>> allGroupsWithTotal() {
         return groups.getAllWithTotal();
     }
 
-    // গ্রুপ ডিলিট করার মেথড
     public void deleteGroupById(long groupId) {
         groups.deleteById(groupId);
     }
 
-    // ★ নতুন যোগ করা খরচ ডিলিট করার মেথড
     public void deleteExpenseById(long expenseId) {
         expenses.deleteById(expenseId);
+    }
+
+    // ★ নির্দিষ্ট খরচ সেটেল করার মেথড
+    public void markExpensesAsSettled(List<Long> ids) {
+        expenses.markAsSettled(ids);
     }
 
     public LiveData<List<MemberEntity>> membersOf(long gid) { return members.ofGroup(gid); }
     public LiveData<List<ExpenseEntity>> expensesOf(long gid) { return expenses.ofGroup(gid); }
     public LiveData<List<ExpenseShareEntity>> sharesOf(long gid) { return expenses.sharesOfGroup(gid); }
     public LiveData<List<SettlementEntity>> settlementsOf(long gid) { return settlements.ofGroup(gid); }
+    
+    public LiveData<List<CategorySum>> getCategorySums(long gid) { return expenses.getCategorySums(gid); }
+    public LiveData<List<DateSum>> getDateSums(long gid) { return expenses.getDateSums(gid); }
 }
