@@ -88,6 +88,41 @@
             android:hint="খরচ বা ক্যাটাগরি খুঁজুন..."
             android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
+        <!-- বাটনগুলো -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettleAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settle All"
+            android:textSize="12sp"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="#2196F3"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettleSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settle Selected"
+            android:textSize="12sp"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="#4CAF50"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSharePdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share PDF"
+            android:textSize="12sp"
+            app:backgroundTint="#6C63FF"/>
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
