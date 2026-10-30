@@ -18,12 +18,14 @@ public class ExpenseEntity {
     public double amount;
     public long paidByMemberId;
     public long createdAt;
+    public String category; // ★ নতুন যোগ করা হলো
 
-    public ExpenseEntity(long groupId, String title, double amount, long paidByMemberId) {
+    public ExpenseEntity(long groupId, String title, double amount, long paidByMemberId, String category) {
         this.groupId = groupId;
         this.title = title;
         this.amount = amount;
         this.paidByMemberId = paidByMemberId;
+        this.category = category;
         this.createdAt = System.currentTimeMillis();
     }
 }
