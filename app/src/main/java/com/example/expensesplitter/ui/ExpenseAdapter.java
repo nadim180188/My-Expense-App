@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
     private final List<ExpenseEntity> listFull = new ArrayList<>();
     private final OnExpenseEditListener editListener;
     private final OnExpenseDeleteListener deleteListener;
+    private final Set<Long> selectedExpenseIds = new HashSet<>(); // ★ সিলেক্ট করা আইডি রাখার জন্য
 
     public interface OnExpenseEditListener { void onEdit(ExpenseEntity expense); }
     public interface OnExpenseDeleteListener { void onDelete(ExpenseEntity expense); }
@@ -37,6 +39,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         notifyDataSetChanged();
     }
 
+    // ★ সিলেক্ট করা আইডিগুলো পাওয়ার মেথড
+    public Set<Long> getSelectedExpenseIds() {
+        return selectedExpenseIds;
+    }
+
     @NonNull @Override
     public VH onCreateViewHolder(@NonNull ViewGroup p, int v) {
         View view = LayoutInflater.from(p.getContext()).inflate(R.layout.item_expense, p, false);
@@ -51,12 +58,14 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         String category = e.category != null ? e.category : "অন্যান্য";
         h.category.setText(category + " • ");
 
-        // ★ সেটেলমেন্ট স্ট্যাটাস চেক
+        // সেটেলমেন্ট স্ট্যাটাস
         if (e.isSettled) {
             h.status.setText("Settlement");
             h.status.setTextColor(Color.parseColor("#4CAF50"));
+            h.checkBox.setVisibility(View.GONE); // যদি সেটেল হয়ে যায়, চেকবক্স দেখাবে না
         } else {
             h.status.setText("");
+            h.checkBox.setVisibility(View.VISIBLE);
         }
 
         Calendar cal = Calendar.getInstance();
@@ -70,7 +79,18 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         h.btnEdit.setOnClickListener(v -> editListener.onEdit(e));
         h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(e));
 
-        // ★ Fade + Slide Left অ্যানিমেশন
+        // ★ চেকবক্সের কাজ (সিলেক্ট করলে আইডি লিস্টে যোগ হবে)
+        h.checkBox.setOnCheckedChangeListener(null); // রিসাইকেল হওয়ার সময় সমস্যা এড়াতে
+        h.checkBox.setChecked(selectedExpenseIds.contains(e.id));
+        h.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                selectedExpenseIds.add(e.id);
+            } else {
+                selectedExpenseIds.remove(e.id);
+            }
+        });
+
+        // Fade + Slide Left অ্যানিমেশন
         h.itemView.setTranslationX(200f);
         h.itemView.setAlpha(0f);
         h.itemView.animate()
@@ -86,6 +106,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
     static class VH extends RecyclerView.ViewHolder {
         TextView title, category, status, amount, dateDay, dateMonth, time;
         ImageView btnEdit, btnDelete;
+        CheckBox checkBox; // ★ নতুন চেকবক্স
         
         VH(View v) {
             super(v);
@@ -98,6 +119,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
             time = v.findViewById(R.id.tvTime);
             btnEdit = v.findViewById(R.id.btnEdit);
             btnDelete = v.findViewById(R.id.btnDelete);
+            checkBox = v.findViewById(R.id.cbSelect); // ★ XML-এ cbSelect আইডি দিতে হবে
         }
     }
 
