@@ -20,6 +20,9 @@ public interface ExpenseDao {
 
     @Query("DELETE FROM expenses WHERE id = :expenseId")
     void deleteById(long expenseId);
+        // ★ নির্দিষ্ট খরচগুলোকে সেটেল হিসেবে মার্ক করার কুয়েরি
+    @Query("UPDATE expenses SET isSettled = 1 WHERE id IN (:expenseIds)")
+    void markAsSettled(List<Long> expenseIds);
 
     @Transaction
     default long insertWithShares(ExpenseEntity e, List<ExpenseShareEntity> shares) {
