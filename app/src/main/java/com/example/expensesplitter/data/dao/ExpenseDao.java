@@ -19,6 +19,10 @@ public interface ExpenseDao {
         return id;
     }
 
+        // ক্যাটাগরি অনুযায়ী টাকার যোগফল বের করার কুয়েরি
+    @Query("SELECT category, SUM(amount) as totalAmount FROM expenses WHERE groupId = :gid GROUP BY category")
+    LiveData<List<CategorySum>> getCategorySums(long gid);
+
     @Query("SELECT * FROM expenses WHERE groupId = :gid ORDER BY createdAt DESC")
     LiveData<List<ExpenseEntity>> ofGroup(long gid);
 
