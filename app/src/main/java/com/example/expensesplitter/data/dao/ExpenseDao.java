@@ -6,6 +6,11 @@ import com.example.expensesplitter.data.entity.ExpenseEntity;
 import com.example.expensesplitter.data.entity.ExpenseShareEntity;
 import java.util.List;
 
+    // তারিখ অনুযায়ী খরচের যোগফল (বার চার্টের জন্য)
+    @Query("SELECT strftime('%d', datetime(createdAt/1000, 'unixepoch')) as date, SUM(amount) as totalAmount " +
+           "FROM expenses WHERE groupId = :gid GROUP BY date ORDER BY date ASC")
+    LiveData<List<DateSum>> getDateSums(long gid);
+
 @Dao
 public interface ExpenseDao {
     @Insert long insertExpense(ExpenseEntity e);
