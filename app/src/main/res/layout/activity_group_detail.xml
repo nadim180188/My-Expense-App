@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginTop="16dp"
         android:paddingBottom="80dp">
 
         <!-- লাইন চার্ট -->
@@ -57,7 +58,7 @@
                 android:id="@+id/btnSettleSelected"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Selected"
+                android:text="Settle Selected"
                 android:textSize="11sp"
                 android:layout_marginEnd="4dp"
                 app:backgroundTint="#4CAF50"/>
