@@ -6,19 +6,13 @@ import androidx.lifecycle.*;
 import com.example.expensesplitter.data.ExpenseRepository;
 import com.example.expensesplitter.data.entity.*;
 import com.example.expensesplitter.model.GroupWithExpense;
+import com.example.expensesplitter.model.CategorySum;
+import com.example.expensesplitter.model.DateSum;
 import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
     private final ExpenseRepository repo;
 
-    public LiveData<List<com.example.expensesplitter.model.DateSum>> getDateSums(long gid) {
-        return repo.getDateSums(gid);
-    }
-
-
-    public LiveData<List<com.example.expensesplitter.model.CategorySum>> getCategorySums(long gid) {
-        return repo.getCategorySums(gid);
-    }
     public GroupViewModel(@NonNull Application app) {
         super(app);
         repo = new ExpenseRepository(app);
@@ -47,6 +41,8 @@ public class GroupViewModel extends AndroidViewModel {
     public LiveData<List<ExpenseEntity>> expenses(long gid) { return repo.expensesOf(gid); }
     public LiveData<List<ExpenseShareEntity>> shares(long gid) { return repo.sharesOf(gid); }
     public LiveData<List<SettlementEntity>> settlements(long gid) { return repo.settlementsOf(gid); }
+    public LiveData<List<CategorySum>> getCategorySums(long gid) { return repo.getCategorySums(gid); }
+    public LiveData<List<DateSum>> getDateSums(long gid) { return repo.getDateSums(gid); }
 
     public void addMember(long gid, String name) {
         new Thread(() -> repo.members.insert(new MemberEntity(gid, name))).start();
@@ -68,8 +64,12 @@ public class GroupViewModel extends AndroidViewModel {
         new Thread(() -> repo.settlements.deleteById(id)).start();
     }
 
-    // ★ নতুন যোগ করা মেথড
     public void updateSettlement(SettlementEntity s) {
         new Thread(() -> repo.settlements.update(s)).start();
+    }
+
+    // ★ সিলেক্টেড খরচ সেটেল করার মেথড
+    public void markExpensesAsSettled(List<Long> ids) {
+        new Thread(() -> repo.markExpensesAsSettled(ids)).start();
     }
 }
