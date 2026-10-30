@@ -128,11 +128,14 @@ public class GroupDetailActivity extends AppCompatActivity {
             };
 
             vm.members(groupId).observe(this, m -> { members.set(m); recompute.run(); });
+            
+            // ★ খরচ লিস্ট লাইভ আপডেট ফিক্স
             vm.expenses(groupId).observe(this, e -> { 
                 expenses.set(e); 
                 expenseAdapter.submit(e); 
                 recompute.run(); 
             });
+            
             vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
             vm.settlements(groupId).observe(this, s -> { 
                 settlements.set(s); 
@@ -148,7 +151,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     int size = Math.min(dateSums.size(), 7);
                     for (int i = 0; i < size; i++) {
                         expensesList.add((float) dateSums.get(i).totalAmount);
-                        settlementsList.add(0f); // আপাতত শোধের ডেটা 0
+                        settlementsList.add(0f); 
                     }
                     lineChart.setData(expensesList, settlementsList);
                 }
@@ -165,10 +168,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, "কোনো বাকি নেই!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                SettlementEntity newSettlement = new SettlementEntity(groupId, 0, due, "PAID", "Auto Settlement (All)");
-                newSettlement.date = System.currentTimeMillis();
-                vm.addSettlement(newSettlement);
+                vm.settleAllExpenses(groupId, due);
                 Toast.makeText(this, "সব বাকি পরিশোধ করা হয়েছে!", Toast.LENGTH_SHORT).show();
             });
 
@@ -179,7 +179,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, "কোনো খরচ সিলেক্ট করা হয়নি!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                vm.markExpensesAsSettled(new ArrayList<>(selectedIds));
+                vm.settleSelectedExpenses(groupId, new ArrayList<>(selectedIds));
                 Toast.makeText(this, "সিলেক্ট করা খরচগুলো সেটেল হয়েছে!", Toast.LENGTH_SHORT).show();
                 
                 // সিলেকশন ক্লিয়ার করা
