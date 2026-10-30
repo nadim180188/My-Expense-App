@@ -79,7 +79,10 @@ public class LineChartView extends View {
     }
 
     private void drawLine(Canvas canvas, List<Float> data, float xStep, float maxVal, float height, float padding, Paint paint, int dotColor) {
-        if (data.isEmpty()) return;
+        boolean hasData = false;
+        for(float f : data) if(f > 0.01f) hasData = true;
+        if (!hasData) return; // ডেটা না থাকলে লাইন বা ডট কিছুই আঁকবে না
+
         Path path = new Path();
         dotPaint.setColor(dotColor);
 
@@ -91,7 +94,7 @@ public class LineChartView extends View {
             else path.lineTo(x, y);
 
             // ★ ডেটা ০ এর থেকে বড় হলেই কেবল ডট আঁকবে
-            if (data.get(i) > 0) {
+            if (data.get(i) > 0.01f) {
                 canvas.drawCircle(x, y, 8f, dotPaint);
             }
         }
