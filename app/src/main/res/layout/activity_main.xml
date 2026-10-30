@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"> <!-- হালকা ধূসর ব্যাকগ্রাউন্ড -->
+    android:background="#F8F9FA">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,6 +11,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- হেডার (Welcome + Manage Category Icon) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +40,7 @@
                     android:text="Welcome Back!"
                     android:textColor="@color/text_light"
                     android:textSize="14sp"/>
-                    <TextView
+                <TextView
                     android:id="@+id/tvGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -48,14 +49,27 @@
                     android:textSize="18sp"
                     android:textStyle="bold"/>
             </LinearLayout>
+
+            <!-- ★ ক্যাটাগরি ম্যানেজমেন্ট বাটন -->
+            <ImageView
+                android:id="@+id/btnManageCategory"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_menu_manage"
+                app:tint="#6C63FF"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Manage Categories"/>
         </LinearLayout>
 
-            <com.example.expensesplitter.ui.PieChartView
+        <!-- পাই চার্ট -->
+        <com.example.expensesplitter.ui.PieChartView
             android:id="@+id/pieChart"
             android:layout_width="match_parent"
-            android:layout_height="180dp" 
+            android:layout_height="180dp"
             android:layout_marginBottom="16dp"/>
-            <com.google.android.material.textfield.TextInputLayout
+
+        <!-- সার্চ বার -->
+        <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +96,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2.5"
+            android:layout_weight="1"
             android:clipToPadding="false"/>
 
     </LinearLayout>
