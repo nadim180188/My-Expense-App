@@ -5,12 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/bg_color">
 
-    <!-- মূল কন্টেন্ট এরিয়া -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="80dp"> 
+        android:paddingBottom="80dp">
 
         <!-- লাইন চার্ট -->
         <com.example.expensesplitter.ui.LineChartView
@@ -21,47 +20,56 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"/>
 
-        <!-- বাটনগুলো -->
-        <HorizontalScrollView
+        <!-- ★ সার্চ বার (গ্রাফের ঠিক নিচে) -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:paddingHorizontal="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            app:startIconDrawable="@android:drawable/ic_menu_search">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearchExpense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="খরচ বা ক্যাটাগরি খুঁজুন..."
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- বাটনগুলো (মাঝখানে অ্যালাইন করা) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_marginBottom="8dp">
 
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettleAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="end">
+                android:text="Settle All"
+                android:textSize="11sp"
+                android:layout_marginEnd="4dp"
+                app:backgroundTint="#2196F3"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSettleAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Settle All"
-                    android:textSize="12sp"
-                    android:layout_marginEnd="8dp"
-                    app:backgroundTint="#2196F3"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettleSelected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selected"
+                android:textSize="11sp"
+                android:layout_marginEnd="4dp"
+                app:backgroundTint="#4CAF50"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSettleSelected"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Settle Selected"
-                    android:textSize="12sp"
-                    android:layout_marginEnd="8dp"
-                    app:backgroundTint="#4CAF50"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSharePdf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Share PDF"
-                    android:textSize="12sp"
-                    app:backgroundTint="#6C63FF"/>
-            </LinearLayout>
-        </HorizontalScrollView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSharePdf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PDF"
+                android:textSize="11sp"
+                app:backgroundTint="#6C63FF"/>
+        </LinearLayout>
 
         <!-- ট্যাব লেআউট -->
         <com.google.android.material.tabs.TabLayout
@@ -74,7 +82,6 @@
             <com.google.android.material.tabs.TabItem android:text="Balance"/>
         </com.google.android.material.tabs.TabLayout>
 
-        <!-- খরচের লিস্ট -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
@@ -82,24 +89,6 @@
             android:layout_weight="1"
             android:paddingHorizontal="8dp"
             android:clipToPadding="false"/>
-
-        <!-- সার্চ বার -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:startIconDrawable="@android:drawable/ic_menu_search">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchExpense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="খরচ বা ক্যাটাগরি খুঁজুন..."
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
     </LinearLayout>
 
     <!-- নিচের সামারি বার -->
@@ -114,7 +103,6 @@
         android:paddingVertical="12dp"
         android:gravity="center_vertical">
 
-        <!-- ★ এখানে space_around এর বদলে layout_weight ব্যবহার করা হয়েছে -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -137,7 +125,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- + বাটন -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAdd"
             android:layout_width="wrap_content"
