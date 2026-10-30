@@ -49,7 +49,15 @@ public class MainActivity extends AppCompatActivity {
         );
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
-
+        
+        EditText etSearch = findViewById(R.id.etSearch);
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s); // অ্যাডাপ্টারে ফিল্টার কল
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
         // ৪. গ্রুপ লিস্ট এবং গ্রাফ আপডেট
         vm.groupsWithTotal().observe(this, groups -> {
             adapter.submit(groups);
