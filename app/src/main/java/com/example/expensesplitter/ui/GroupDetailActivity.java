@@ -43,6 +43,22 @@ public class GroupDetailActivity extends AppCompatActivity {
 
             // onCreate এর ভেতরে, অন্যান্য findViewById এর সাথে:
         CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
+        BarChartView barChart = findViewById(R.id.barChart);
+
+        vm.getDateSums(groupId).observe(this, dateSums -> {
+            if (barChart != null && dateSums != null) {
+                java.util.List<Float> values = new java.util.ArrayList<>();
+                java.util.List<String> labels = new java.util.ArrayList<>();
+                
+                // যদি অনেক ডেটা থাকে, তবে শেষ ৭ দিন দেখাতে পারি
+                int size = Math.min(dateSums.size(), 7);
+                for (int i = 0; i < size; i++) {
+                    values.add((float) dateSums.get(i).totalAmount);
+                    labels.add(dateSums.get(i).date); // ০১, ০২, ০৩...
+                }
+                barChart.setData(values, labels);
+            }
+        });
 
 // vm.settlements(...) এর ঠিক নিচে এই লাইনটি যোগ করুন:
         vm.getCategorySums(groupId).observe(this, categorySums -> {
