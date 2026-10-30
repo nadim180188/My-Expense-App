@@ -20,6 +20,7 @@
         <activity android:name=".ui.AddExpenseActivity" />
         <activity android:name=".ui.AddSettlementActivity" />
         <activity android:name=".ui.CreateGroupActivity" />
+        <activity android:name=".ui.ManageCategoryActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
