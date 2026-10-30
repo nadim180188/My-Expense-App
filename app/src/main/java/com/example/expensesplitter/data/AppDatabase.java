@@ -10,8 +10,8 @@ import com.example.expensesplitter.data.entity.*;
 @Database(entities = {
         GroupEntity.class, MemberEntity.class,
         ExpenseEntity.class, ExpenseShareEntity.class,
-        SettlementEntity.class
-}, version = 2, exportSchema = false)
+        SettlementEntity.class, CategoryEntity.class // ★ নতুন যোগ হলো
+}, version = 4, exportSchema = false) // ★ ভার্সন ৪ করা হলো
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
 
@@ -19,6 +19,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MemberDao memberDao();
     public abstract ExpenseDao expenseDao();
     public abstract SettlementDao settlementDao();
+    public abstract CategoryDao categoryDao(); // ★ নতুন যোগ হলো
 
     public static AppDatabase get(Context ctx) {
         if (INSTANCE == null) {
