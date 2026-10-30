@@ -30,6 +30,7 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         long groupId = getIntent().getLongExtra("GROUP_ID", -1);
         expenseId = getIntent().getLongExtra("EXPENSE_ID", -1);
+    
         
         GroupViewModel vm = new ViewModelProvider(this).get(GroupViewModel.class);
 
@@ -37,6 +38,25 @@ public class AddExpenseActivity extends AppCompatActivity {
         EditText etAmount = findViewById(R.id.etAmount);
         etDateTime = findViewById(R.id.etDateTime);
         Button btnSave = findViewById(R.id.btnSave);
+
+        // onCreate এর ভেতরে:
+        AutoCompleteTextView spinnerCategory = findViewById(R.id.spinnerCategory);
+        String[] categories = {"বাজার", "খাবার", "যাতায়াত", "বিল", "অন্যান্য"};
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categories);
+        spinnerCategory.setAdapter(catAdapter);
+
+// সেভ বাটনে ক্লিকের সময়:
+        btnSave.setOnClickListener(v -> {
+            // ... আগের কোড ...
+            String category = spinnerCategory.getText().toString();
+            if (category.isEmpty()) category = "অন্যান্য";
+
+            // কনস্ট্রাক্টরে category পাস করুন
+            ExpenseEntity expense = new ExpenseEntity(groupId, title, amount, 0, category);
+            expense.createdAt = selectedDate;
+            
+            // ... বাকি কোড আগের মতো ...
+        });
 
         // এডিট মোড চেক
         if (expenseId != -1) {
