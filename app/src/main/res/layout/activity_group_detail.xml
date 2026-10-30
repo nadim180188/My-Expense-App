@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="80dp"> <!-- নিচের সামারি বারের জন্য জায়গা রাখা হলো -->
+        android:paddingBottom="80dp"> 
 
         <!-- লাইন চার্ট -->
         <com.example.expensesplitter.ui.LineChartView
@@ -21,7 +21,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"/>
 
-        <!-- বাটনগুলো (ডান দিকে অ্যালাইন করা) -->
+        <!-- বাটনগুলো -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
             android:paddingHorizontal="8dp"
             android:clipToPadding="false"/>
 
-        <!-- সার্চ বার (লিস্টের ঠিক নিচে এবং সামারির উপরে) -->
+        <!-- সার্চ বার -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
 
     </LinearLayout>
 
-    <!-- নিচের সামারি বার (Total, Paid, Due + Add Button) -->
+    <!-- নিচের সামারি বার -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,24 +114,24 @@
         android:paddingVertical="12dp"
         android:gravity="center_vertical">
 
+        <!-- ★ এখানে space_around এর বদলে layout_weight ব্যবহার করা হয়েছে -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="space_around">
+            android:orientation="horizontal">
 
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total" android:textSize="12sp" android:textColor="#777777"/>
                 <TextView android:id="@+id/tvTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textStyle="bold" android:textSize="16sp" android:textColor="#2D2D2D"/>
             </LinearLayout>
 
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Paid" android:textSize="12sp" android:textColor="#777777"/>
                 <TextView android:id="@+id/tvPaid" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textStyle="bold" android:textSize="16sp" android:textColor="#2E7D32"/>
             </LinearLayout>
 
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Due" android:textSize="12sp" android:textColor="#777777"/>
                 <TextView android:id="@+id/tvDue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textStyle="bold" android:textSize="16sp" android:textColor="#C62828"/>
             </LinearLayout>
