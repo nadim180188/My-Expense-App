@@ -68,8 +68,18 @@ public class GroupViewModel extends AndroidViewModel {
         new Thread(() -> repo.settlements.update(s)).start();
     }
 
-    // ★ সিলেক্টেড খরচ সেটেল করার মেথড
     public void markExpensesAsSettled(List<Long> ids) {
         new Thread(() -> repo.markExpensesAsSettled(ids)).start();
+    }
+
+    // ★ নতুন ক্যাটাগরি মেথড
+    public LiveData<List<CategoryEntity>> getCategories() { return repo.getCategories(); }
+    
+    public void addCategory(CategoryEntity c) {
+        new Thread(() -> repo.addCategory(c)).start();
+    }
+    
+    public void deleteCategory(long id) {
+        new Thread(() -> repo.deleteCategoryById(id)).start();
     }
 }
