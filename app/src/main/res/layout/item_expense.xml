@@ -72,7 +72,6 @@
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp" android:gravity="center_vertical">
                     <TextView android:id="@+id/tvCategory" android:textSize="12sp" android:textColor="#6C63FF" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                     
-                    <!-- স্ট্যাটাস টেক্সট (Settlement) -->
                     <TextView android:id="@+id/tvStatus" android:textSize="12sp" android:textStyle="bold" android:layout_marginStart="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                     
                     <TextView android:id="@+id/tvTime" android:textSize="12sp" android:textColor="#777777" android:layout_marginStart="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
@@ -86,12 +85,11 @@
                 android:orientation="vertical"
                 android:gravity="end">
                 
-                <!-- ★ চেকবক্স (এখানে buttonTint একবারই আছে) -->
+                <!-- ★ চেকবক্স (buttonTint রিমুভ করা হয়েছে) -->
                 <CheckBox
                     android:id="@+id/cbSelect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/checkbox_tint"
                     android:layout_gravity="end"/>
 
                 <TextView
