@@ -14,6 +14,7 @@ public class ExpenseRepository {
     public final MemberDao members;
     public final ExpenseDao expenses;
     public final SettlementDao settlements;
+    public final CategoryDao categories; // ★ নতুন
 
     public ExpenseRepository(Context ctx) {
         AppDatabase db = AppDatabase.get(ctx);
@@ -21,6 +22,7 @@ public class ExpenseRepository {
         members = db.memberDao();
         expenses = db.expenseDao();
         settlements = db.settlementDao();
+        categories = db.categoryDao(); // ★ নতুন
     }
 
     public LiveData<List<GroupWithExpense>> allGroupsWithTotal() {
@@ -35,7 +37,6 @@ public class ExpenseRepository {
         expenses.deleteById(expenseId);
     }
 
-    // ★ নির্দিষ্ট খরচ সেটেল করার মেথড
     public void markExpensesAsSettled(List<Long> ids) {
         expenses.markAsSettled(ids);
     }
@@ -47,4 +48,9 @@ public class ExpenseRepository {
     
     public LiveData<List<CategorySum>> getCategorySums(long gid) { return expenses.getCategorySums(gid); }
     public LiveData<List<DateSum>> getDateSums(long gid) { return expenses.getDateSums(gid); }
+
+    // ★ নতুন ক্যাটাগরি মেথড
+    public LiveData<List<CategoryEntity>> getCategories() { return categories.getAll(); }
+    public void addCategory(CategoryEntity c) { categories.insert(c); }
+    public void deleteCategoryById(long id) { categories.deleteById(id); }
 }
