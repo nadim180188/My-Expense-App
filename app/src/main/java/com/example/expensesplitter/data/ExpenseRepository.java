@@ -12,6 +12,10 @@ public class ExpenseRepository {
     public final MemberDao members;
     public final ExpenseDao expenses;
     public final SettlementDao settlements;
+
+     public LiveData<List<com.example.expensesplitter.model.DateSum>> getDateSums(long gid) {
+        return expenses.getDateSums(gid);
+    }
     public LiveData<List<com.example.expensesplitter.model.CategorySum>> getCategorySums(long gid) {
         return expenses.getCategorySums(gid);
     }
