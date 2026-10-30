@@ -22,7 +22,6 @@
             android:layout_height="12dp"
             android:background="@color/purple_primary"
             android:backgroundTint="@color/purple_primary"/>
-            <!-- উপরে গোল ডট -->
             
         <View
             android:layout_width="2dp"
@@ -61,17 +60,22 @@
                 <TextView android:id="@+id/tvDateMonth" android:textSize="12sp" android:textColor="#777777" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
             </LinearLayout>
 
-            <!-- খরচের নাম এবং ক্যাটাগরি -->
+            <!-- খরচের নাম, ক্যাটাগরি, স্ট্যাটাস এবং সময় -->
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_weight="1"
                 android:layout_marginStart="16dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
+                
                 <TextView android:id="@+id/tvTitle" android:textSize="16sp" android:textStyle="bold" android:textColor="#2D2D2D" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                 
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp" android:gravity="center_vertical">
                     <TextView android:id="@+id/tvCategory" android:textSize="12sp" android:textColor="#6C63FF" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                    
+                    <!-- ★ নতুন স্ট্যাটাস টেক্সট -->
+                    <TextView android:id="@+id/tvStatus" android:textSize="12sp" android:textStyle="bold" android:layout_marginStart="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                    
                     <TextView android:id="@+id/tvTime" android:textSize="12sp" android:textColor="#777777" android:layout_marginStart="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                 </LinearLayout>
             </LinearLayout>
