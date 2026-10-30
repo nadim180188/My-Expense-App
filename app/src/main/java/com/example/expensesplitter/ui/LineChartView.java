@@ -18,7 +18,7 @@ public class LineChartView extends View {
     private List<Float> settlementData = new ArrayList<>();
     private float animationProgress = 0f;
     
-    private int maxPoints = 7; // সর্বোচ্চ ৭ দিনের ডেটা দেখাবে
+    private int maxPoints = 7;
 
     public LineChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -27,12 +27,12 @@ public class LineChartView extends View {
 
     private void init() {
         linePaintExpense = new Paint(Paint.ANTI_ALIAS_FLAG);
-        linePaintExpense.setColor(Color.parseColor("#FF5252")); // লাল (খরচ)
+        linePaintExpense.setColor(Color.parseColor("#FF5252"));
         linePaintExpense.setStyle(Paint.Style.STROKE);
         linePaintExpense.setStrokeWidth(6f);
 
         linePaintSettlement = new Paint(Paint.ANTI_ALIAS_FLAG);
-        linePaintSettlement.setColor(Color.parseColor("#4CAF50")); // সবুজ (শোধ)
+        linePaintSettlement.setColor(Color.parseColor("#4CAF50"));
         linePaintSettlement.setStyle(Paint.Style.STROKE);
         linePaintSettlement.setStrokeWidth(6f);
 
@@ -59,7 +59,7 @@ public class LineChartView extends View {
         float height = getHeight();
         float padding = 50f;
 
-        // গ্রিড লাইন আঁকা
+        // গ্রিড লাইন
         for (int i = 0; i <= 4; i++) {
             float y = padding + (i * (height - 2 * padding) / 4);
             canvas.drawLine(padding, y, width - padding, y, gridPaint);
@@ -71,10 +71,10 @@ public class LineChartView extends View {
 
         float xStep = (width - 2 * padding) / Math.max(1, maxPoints - 1);
 
-        // ১. খরচের লাইন আঁকা (লাল)
+        // খরচের লাইন
         drawLine(canvas, expenseData, xStep, maxVal, height, padding, linePaintExpense, Color.parseColor("#FF5252"));
 
-        // ২. শোধের লাইন আঁকা (সবুজ)
+        // শোধের লাইন
         drawLine(canvas, settlementData, xStep, maxVal, height, padding, linePaintSettlement, Color.parseColor("#4CAF50"));
     }
 
@@ -85,14 +85,15 @@ public class LineChartView extends View {
 
         for (int i = 0; i < data.size(); i++) {
             float x = padding + (i * xStep);
-            // Y-অক্ষ হিসাব (উপর থেকে নিচে)
             float y = height - padding - ((data.get(i) / maxVal) * (height - 2 * padding) * animationProgress);
 
             if (i == 0) path.moveTo(x, y);
             else path.lineTo(x, y);
 
-            // ডট আঁকা
-            canvas.drawCircle(x, y, 8f, dotPaint);
+            // ★ ডেটা ০ এর থেকে বড় হলেই কেবল ডট আঁকবে
+            if (data.get(i) > 0) {
+                canvas.drawCircle(x, y, 8f, dotPaint);
+            }
         }
         canvas.drawPath(path, paint);
     }
