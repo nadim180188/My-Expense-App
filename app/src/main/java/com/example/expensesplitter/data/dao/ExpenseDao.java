@@ -24,6 +24,14 @@ public interface ExpenseDao {
     @Query("UPDATE expenses SET isSettled = 1 WHERE id IN (:expenseIds)")
     void markAsSettled(List<Long> expenseIds);
 
+    // ★ সব খরচকে সেটেল হিসেবে মার্ক করার কুয়েরি
+    @Query("UPDATE expenses SET isSettled = 1 WHERE groupId = :gid")
+    void markAllAsSettled(long gid);
+
+    // ★ নির্দিষ্ট আইডির খরচগুলো আনা
+    @Query("SELECT * FROM expenses WHERE id IN (:ids)")
+    List<ExpenseEntity> getExpensesByIds(List<Long> ids);
+
     @Transaction
     default long insertWithShares(ExpenseEntity e, List<ExpenseShareEntity> shares) {
         long id = insertExpense(e);
