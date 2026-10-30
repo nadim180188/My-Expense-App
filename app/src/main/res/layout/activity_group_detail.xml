@@ -18,7 +18,7 @@
             android:layout_height="150dp"
             android:layout_margin="16dp"/>
 
-        <!-- বাটনগুলো -->
+        <!-- বাটনগুলো (শুধু একবার Settle All এবং Share PDF) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,22 +45,6 @@
                 app:backgroundTint="#6C63FF"/>
         </LinearLayout>
 
-        <!-- সার্চ বার -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="8dp"
-            app:startIconDrawable="@android:drawable/ic_menu_search">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchExpense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="খরচ বা ক্যাটাগরি খুঁজুন..."
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
@@ -76,6 +60,23 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="8dp"/>
+
+        <!-- ★ সার্চ বার (সামারির ঠিক উপরে) -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:startIconDrawable="@android:drawable/ic_menu_search">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearchExpense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="খরচ বা ক্যাটাগরি খুঁজুন..."
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 
