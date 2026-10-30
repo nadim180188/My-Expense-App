@@ -40,6 +40,16 @@ public class GroupDetailActivity extends AppCompatActivity {
 
             rv = findViewById(R.id.recyclerView);
             rv.setLayoutManager(new LinearLayoutManager(this));
+
+            // onCreate এর ভেতরে, অন্যান্য findViewById এর সাথে:
+        CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
+
+// vm.settlements(...) এর ঠিক নিচে এই লাইনটি যোগ করুন:
+        vm.getCategorySums(groupId).observe(this, categorySums -> {
+            if (categoryChart != null) {
+                categoryChart.setData(categorySums);
+            }
+        });
             
             expenseAdapter = new ExpenseAdapter(
                 expense -> {
