@@ -18,7 +18,10 @@ public class ExpenseEntity {
     public double amount;
     public long paidByMemberId;
     public long createdAt;
-    public String category; // ★ নতুন যোগ করা হলো
+    public String category;
+    
+    // ★ নতুন যোগ করা হলো: খরচটি সেটেল (শোধ) হয়েছে কিনা
+    public boolean isSettled = false; 
 
     public ExpenseEntity(long groupId, String title, double amount, long paidByMemberId, String category) {
         this.groupId = groupId;
