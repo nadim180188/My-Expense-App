@@ -93,6 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="#6C63FF"
+                    android:buttonTint="@color/checkbox_tint"
                     android:layout_gravity="end"/>
 
                 <TextView
