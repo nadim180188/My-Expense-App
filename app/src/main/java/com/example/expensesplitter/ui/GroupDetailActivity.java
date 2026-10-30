@@ -36,6 +36,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             TextView tvTotal = findViewById(R.id.tvTotal);
             TextView tvPaid = findViewById(R.id.tvPaid);
             TextView tvDue = findViewById(R.id.tvDue);
+            
             CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
             BarChartView barChart = findViewById(R.id.barChart);
 
@@ -128,14 +129,12 @@ public class GroupDetailActivity extends AppCompatActivity {
                 recompute.run(); 
             });
 
-            // ★ ক্যাটাগরি পাই চার্ট ডেটা
             vm.getCategorySums(groupId).observe(this, categorySums -> {
                 if (categoryChart != null) {
                     categoryChart.setData(categorySums);
                 }
             });
 
-            // ★ মান্থলি বার চার্ট ডেটা
             vm.getDateSums(groupId).observe(this, dateSums -> {
                 if (barChart != null && dateSums != null) {
                     List<Float> values = new ArrayList<>();
