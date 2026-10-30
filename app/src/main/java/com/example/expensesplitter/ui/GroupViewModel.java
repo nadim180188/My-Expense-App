@@ -22,13 +22,8 @@ public class GroupViewModel extends AndroidViewModel {
         new Thread(() -> repo.expenses.updateExpenseWithShares(e, shares)).start();
     }
 
-    public LiveData<List<GroupWithExpense>> groupsWithTotal() { 
-        return repo.allGroupsWithTotal(); 
-    }
-
-    public void deleteGroup(long groupId) {
-        new Thread(() -> repo.deleteGroupById(groupId)).start();
-    }
+    public LiveData<List<GroupWithExpense>> groupsWithTotal() { return repo.allGroupsWithTotal(); }
+    public void deleteGroup(long groupId) { new Thread(() -> repo.deleteGroupById(groupId)).start(); }
 
     public void addCustomGroup(GroupEntity group) {
         new Thread(() -> {
@@ -44,42 +39,41 @@ public class GroupViewModel extends AndroidViewModel {
     public LiveData<List<CategorySum>> getCategorySums(long gid) { return repo.getCategorySums(gid); }
     public LiveData<List<DateSum>> getDateSums(long gid) { return repo.getDateSums(gid); }
 
-    public void addMember(long gid, String name) {
-        new Thread(() -> repo.members.insert(new MemberEntity(gid, name))).start();
-    }
-    
-    public void addExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) {
-        new Thread(() -> repo.expenses.insertWithShares(e, shares)).start();
-    }
-    
-    public void addSettlement(SettlementEntity s) {
-        new Thread(() -> repo.settlements.insert(s)).start();
+    public void addMember(long gid, String name) { new Thread(() -> repo.members.insert(new MemberEntity(gid, name))).start(); }
+    public void addExpense(ExpenseEntity e, List<ExpenseShareEntity> shares) { new Thread(() -> repo.expenses.insertWithShares(e, shares)).start(); }
+    public void addSettlement(SettlementEntity s) { new Thread(() -> repo.settlements.insert(s)).start(); }
+    public void deleteExpense(long expenseId) { new Thread(() -> repo.deleteExpenseById(expenseId)).start(); }
+    public void deleteSettlement(long id) { new Thread(() -> repo.settlements.deleteById(id)).start(); }
+    public void updateSettlement(SettlementEntity s) { new Thread(() -> repo.settlements.update(s)).start(); }
+
+    // ★ টোটাল সেটেলমেন্ট লজিক (সব খরচ সেটেল + একটি Settlement তৈরি)
+    public void settleAllExpenses(long groupId, double dueAmount) {
+        new Thread(() -> {
+            repo.expenses.markAllAsSettled(groupId);
+            if (dueAmount > 0) {
+                SettlementEntity s = new SettlementEntity(groupId, 0, dueAmount, "PAID", "Settled All");
+                repo.settlements.insert(s);
+            }
+        }).start();
     }
 
-    public void deleteExpense(long expenseId) {
-        new Thread(() -> repo.deleteExpenseById(expenseId)).start();
+    // ★ সিলেক্টেড সেটেলমেন্ট লজিক (শুধু সিলেক্ট করা খরচ সেটেল + Settlement তৈরি)
+    public void settleSelectedExpenses(long groupId, List<Long> expenseIds) {
+        new Thread(() -> {
+            List<ExpenseEntity> selected = repo.expenses.getExpensesByIds(expenseIds);
+            double totalAmount = 0;
+            for (ExpenseEntity e : selected) totalAmount += e.amount;
+
+            repo.expenses.markAsSettled(expenseIds);
+            
+            if (totalAmount > 0) {
+                SettlementEntity s = new SettlementEntity(groupId, 0, totalAmount, "PAID", "Settled Selected (" + selected.size() + " items)");
+                repo.settlements.insert(s);
+            }
+        }).start();
     }
 
-    public void deleteSettlement(long id) {
-        new Thread(() -> repo.settlements.deleteById(id)).start();
-    }
-
-    public void updateSettlement(SettlementEntity s) {
-        new Thread(() -> repo.settlements.update(s)).start();
-    }
-
-    public void markExpensesAsSettled(List<Long> ids) {
-        new Thread(() -> repo.markExpensesAsSettled(ids)).start();
-    }
-
-    // ★ নতুন ক্যাটাগরি মেথড
     public LiveData<List<CategoryEntity>> getCategories() { return repo.getCategories(); }
-    
-    public void addCategory(CategoryEntity c) {
-        new Thread(() -> repo.addCategory(c)).start();
-    }
-    
-    public void deleteCategory(long id) {
-        new Thread(() -> repo.deleteCategoryById(id)).start();
-    }
+    public void addCategory(CategoryEntity c) { new Thread(() -> repo.addCategory(c)).start(); }
+    public void deleteCategory(long id) { new Thread(() -> repo.deleteCategoryById(id)).start(); }
 }
