@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.expensesplitter.R;
+import com.example.expensesplitter.data.entity.CategoryEntity;
 import com.example.expensesplitter.data.entity.ExpenseEntity;
 import com.example.expensesplitter.data.entity.ExpenseShareEntity;
 import java.text.SimpleDateFormat;
@@ -42,12 +43,29 @@ public class AddExpenseActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         spinnerCategory = findViewById(R.id.spinnerCategory);
 
-        // ★ ক্যাটাগরি ড্রপডাউন সেটআপ
-        String[] categories = {"বাজার", "খাবার", "যাতায়াত", "বিল", "অন্যান্য"};
-        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categories);
+        // ★ ডেটাবেস থেকে ক্যাটাগরি লোড করা
+        List<String> categoryList = new ArrayList<>();
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categoryList);
         spinnerCategory.setAdapter(catAdapter);
 
-        // এডিট মোড চেক (যদি আগের কোনো খরচ এডিট করতে আসেন)
+        vm.getCategories().observe(this, categories -> {
+            categoryList.clear();
+            for (CategoryEntity c : categories) {
+                categoryList.add(c.name);
+            }
+            catAdapter.notifyDataSetChanged();
+        });
+
+        // ★ Manage Categories অপশন (একটি ডায়ালগের মাধ্যমে)
+        spinnerCategory.setOnClickListener(v -> {
+            new android.app.AlertDialog.Builder(this)
+                .setTitle("Manage Categories")
+                .setMessage("নতুন ক্যাটাগরি যোগ বা ডিলিট করতে চান?")
+                .setPositiveButton("Yes", (d, w) -> startActivity(new android.content.Intent(this, ManageCategoryActivity.class)))
+                .setNegativeButton("No", null).show();
+        });
+
+        // এডিট মোড চেক
         if (expenseId != -1) {
             String title = getIntent().getStringExtra("EXPENSE_TITLE");
             double amt = getIntent().getDoubleExtra("EXPENSE_AMOUNT", 0);
@@ -92,7 +110,6 @@ public class AddExpenseActivity extends AppCompatActivity {
             
             double amount = Double.parseDouble(amtStr);
             
-            // ★ নতুন কনস্ট্রাক্টর অনুযায়ী ক্যাটাগরি পাস করা হলো
             ExpenseEntity expense = new ExpenseEntity(groupId, title, amount, 0, category);
             expense.createdAt = selectedDate;
             
