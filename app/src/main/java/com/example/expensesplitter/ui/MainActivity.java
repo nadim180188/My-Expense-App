@@ -77,19 +77,18 @@ public class MainActivity extends AppCompatActivity {
             pieChart.setData((float) totalPaid, (float) totalDue);
         });
 
-        // ৬. + বাটনের কাজ (CreateGroupActivity ওপেন করবে)
+        // ৬. + বাটনের কাজ
         FloatingActionButton fab = findViewById(R.id.fabAdd);
         fab.setOnClickListener(v -> {
             startActivity(new Intent(this, CreateGroupActivity.class));
         });
 
-        // ৭. ★ ক্যাটাগরি ম্যানেজমেন্ট বাটনের কাজ
+        // ৭. ক্যাটাগরি ম্যানেজমেন্ট বাটনের কাজ
         findViewById(R.id.btnManageCategory).setOnClickListener(v -> {
             startActivity(new Intent(this, ManageCategoryActivity.class));
         });
     }
 
-    // গ্রিটিংস আপডেট করার মেথড
     private void updateGreeting() {
         TextView tvGreeting = findViewById(R.id.tvGreeting);
         Calendar c = Calendar.getInstance();
