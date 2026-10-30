@@ -43,6 +43,14 @@ public class GroupDetailActivity extends AppCompatActivity {
             rv = findViewById(R.id.recyclerView);
             rv.setLayoutManager(new LinearLayoutManager(this));
             
+           EditText etSearchExpense = findViewById(R.id.etSearchExpense);
+            etSearchExpense.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                expenseAdapter.getFilter().filter(s);
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
             expenseAdapter = new ExpenseAdapter(
                 expense -> {
                     android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
