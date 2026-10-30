@@ -148,12 +148,11 @@ public class GroupDetailActivity extends AppCompatActivity {
                 }
             });
 
-            // লাইন চার্টে ডেটা পাঠানো
+            // লাইন চার্ট
             vm.getDateSums(groupId).observe(this, dateSums -> {
                 if (lineChart != null && dateSums != null) {
                     List<Float> expensesList = new ArrayList<>();
                     List<Float> settlementsList = new ArrayList<>();
-                    
                     int size = Math.min(dateSums.size(), 7);
                     for (int i = 0; i < size; i++) {
                         expensesList.add((float) dateSums.get(i).totalAmount);
@@ -163,7 +162,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 }
             });
 
-            // ★ টোটাল সেটেলমেন্ট বাটনের কাজ
+            // ★ টোটাল সেটেলমেন্ট বাটন
             findViewById(R.id.btnSettleAll).setOnClickListener(v -> {
                 double totalExp = 0, totalPaid = 0;
                 for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
@@ -177,9 +176,19 @@ public class GroupDetailActivity extends AppCompatActivity {
 
                 SettlementEntity newSettlement = new SettlementEntity(groupId, 0, due, "PAID", "Auto Settlement (All)");
                 newSettlement.date = System.currentTimeMillis();
-                
                 vm.addSettlement(newSettlement);
                 Toast.makeText(this, "সব বাকি পরিশোধ করা হয়েছে!", Toast.LENGTH_SHORT).show();
+            });
+
+            // ★ সিলেক্টেড খরচ সেটেলমেন্ট বাটন
+            findViewById(R.id.btnSettleSelected).setOnClickListener(v -> {
+                Set<Long> selectedIds = expenseAdapter.getSelectedExpenseIds();
+                if (selectedIds.isEmpty()) {
+                    Toast.makeText(this, "কোনো খরচ সিলেক্ট করা হয়নি!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                vm.markExpensesAsSettled(new ArrayList<>(selectedIds));
+                Toast.makeText(this, "সিলেক্ট করা খরচগুলো সেটেল হয়েছে!", Toast.LENGTH_SHORT).show();
             });
 
             // + বাটন
@@ -200,7 +209,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                         }).show();
             });
 
-            // PDF শেয়ার বাটন
+            // PDF শেয়ার
             findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
                 try {
                     PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get(), settlements.get());
