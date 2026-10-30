@@ -20,8 +20,7 @@
         <View
             android:layout_width="12dp"
             android:layout_height="12dp"
-            android:background="@color/purple_primary"
-            android:backgroundTint="@color/purple_primary"/>
+            android:background="@color/purple_primary"/>
             
         <View
             android:layout_width="2dp"
@@ -87,12 +86,11 @@
                 android:orientation="vertical"
                 android:gravity="end">
                 
-                <!-- ★ নতুন চেকবক্স -->
+                <!-- ★ চেকবক্স (এখানে buttonTint একবারই আছে) -->
                 <CheckBox
                     android:id="@+id/cbSelect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="#6C63FF"
                     android:buttonTint="@color/checkbox_tint"
                     android:layout_gravity="end"/>
 
