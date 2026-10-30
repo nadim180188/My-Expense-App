@@ -1,7 +1,7 @@
 package com.example.expensesplitter.ui;
 
 import android.os.Bundle;
-import android.widget.EditText; // ★ এই ইমপোর্টটি মিসিং ছিল
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +38,9 @@ public class GroupDetailActivity extends AppCompatActivity {
             TextView tvPaid = findViewById(R.id.tvPaid);
             TextView tvDue = findViewById(R.id.tvDue);
             CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
-            BarChartView barChart = findViewById(R.id.barChart);
+            
+            // ★ এখানে BarChartView এর জায়গায় LineChartView ব্যবহার করা হলো
+            LineChartView lineChart = findViewById(R.id.lineChart);
 
             rv = findViewById(R.id.recyclerView);
             rv.setLayoutManager(new LinearLayoutManager(this));
@@ -84,7 +86,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             balanceAdapter = new BalanceAdapter();
             rv.setAdapter(expenseAdapter);
 
-            // ★ সার্চ বার লজিক
+            // সার্চ বার
             EditText etSearchExpense = findViewById(R.id.etSearchExpense);
             if (etSearchExpense != null) {
                 etSearchExpense.addTextChangedListener(new android.text.TextWatcher() {
@@ -141,23 +143,45 @@ public class GroupDetailActivity extends AppCompatActivity {
                 recompute.run(); 
             });
 
+            // ক্যাটাগরি পাই চার্ট
             vm.getCategorySums(groupId).observe(this, categorySums -> {
                 if (categoryChart != null) {
                     categoryChart.setData(categorySums);
                 }
             });
 
+            // ★ লাইন চার্টে ডেটা পাঠানো
             vm.getDateSums(groupId).observe(this, dateSums -> {
-                if (barChart != null && dateSums != null) {
-                    List<Float> values = new ArrayList<>();
-                    List<String> labels = new ArrayList<>();
+                if (lineChart != null && dateSums != null) {
+                    List<Float> expensesList = new ArrayList<>();
+                    List<Float> settlementsList = new ArrayList<>();
+                    
                     int size = Math.min(dateSums.size(), 7);
                     for (int i = 0; i < size; i++) {
-                        values.add((float) dateSums.get(i).totalAmount);
-                        labels.add(dateSums.get(i).date); 
+                        expensesList.add((float) dateSums.get(i).totalAmount);
+                        settlementsList.add(0f); // আপাতত শোধের ডেটা 0 (পরে ডেটাবেস থেকে আসবে)
                     }
-                    barChart.setData(values, labels);
+                    lineChart.setData(expensesList, settlementsList);
                 }
+            });
+
+            // টোটাল সেটেলমেন্ট বাটন
+            findViewById(R.id.btnSettleAll).setOnClickListener(v -> {
+                double totalExp = 0, totalPaid = 0;
+                for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
+                for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
+                
+                double due = totalExp - totalPaid;
+                if (due <= 0) {
+                    Toast.makeText(this, "কোনো বাকি নেই!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                SettlementEntity newSettlement = new SettlementEntity(groupId, 0, due, "PAID", "Auto Settlement (All)");
+                newSettlement.date = System.currentTimeMillis();
+                
+                vm.addSettlement(newSettlement);
+                Toast.makeText(this, "সব বাকি পরিশোধ করা হয়েছে!", Toast.LENGTH_SHORT).show();
             });
 
             findViewById(R.id.fabAdd).setOnClickListener(v -> {
