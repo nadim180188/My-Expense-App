@@ -46,8 +46,8 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"/>
 
-        <com.example.expensesplitter.ui.BarChartView
-            android:id="@+id/barChart"
+         <com.example.expensesplitter.ui.LineChartView
+            android:id="@+id/lineChart"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
