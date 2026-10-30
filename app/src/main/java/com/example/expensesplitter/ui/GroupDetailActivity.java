@@ -37,7 +37,6 @@ public class GroupDetailActivity extends AppCompatActivity {
             TextView tvTotal = findViewById(R.id.tvTotal);
             TextView tvPaid = findViewById(R.id.tvPaid);
             TextView tvDue = findViewById(R.id.tvDue);
-            CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
             LineChartView lineChart = findViewById(R.id.lineChart);
 
             rv = findViewById(R.id.recyclerView);
@@ -129,23 +128,19 @@ public class GroupDetailActivity extends AppCompatActivity {
             };
 
             vm.members(groupId).observe(this, m -> { members.set(m); recompute.run(); });
+            
+            // ★ খরচ লিস্ট লাইভ আপডেট ফিক্স
             vm.expenses(groupId).observe(this, e -> { 
                 expenses.set(e); 
                 expenseAdapter.submit(e); 
                 recompute.run(); 
             });
+            
             vm.shares(groupId).observe(this, s -> { shares.set(s); recompute.run(); });
             vm.settlements(groupId).observe(this, s -> { 
                 settlements.set(s); 
                 settlementAdapter.submit(s); 
                 recompute.run(); 
-            });
-
-            // ক্যাটাগরি পাই চার্ট
-            vm.getCategorySums(groupId).observe(this, categorySums -> {
-                if (categoryChart != null) {
-                    categoryChart.setData(categorySums);
-                }
             });
 
             // লাইন চার্ট
@@ -162,7 +157,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 }
             });
 
-            // ★ টোটাল সেটেলমেন্ট বাটন
+            // টোটাল সেটেলমেন্ট বাটন
             findViewById(R.id.btnSettleAll).setOnClickListener(v -> {
                 double totalExp = 0, totalPaid = 0;
                 for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
@@ -178,17 +173,6 @@ public class GroupDetailActivity extends AppCompatActivity {
                 newSettlement.date = System.currentTimeMillis();
                 vm.addSettlement(newSettlement);
                 Toast.makeText(this, "সব বাকি পরিশোধ করা হয়েছে!", Toast.LENGTH_SHORT).show();
-            });
-
-            // ★ সিলেক্টেড খরচ সেটেলমেন্ট বাটন
-            findViewById(R.id.btnSettleSelected).setOnClickListener(v -> {
-                Set<Long> selectedIds = expenseAdapter.getSelectedExpenseIds();
-                if (selectedIds.isEmpty()) {
-                    Toast.makeText(this, "কোনো খরচ সিলেক্ট করা হয়নি!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                vm.markExpensesAsSettled(new ArrayList<>(selectedIds));
-                Toast.makeText(this, "সিলেক্ট করা খরচগুলো সেটেল হয়েছে!", Toast.LENGTH_SHORT).show();
             });
 
             // + বাটন
