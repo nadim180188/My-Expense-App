@@ -43,7 +43,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         spinnerCategory = findViewById(R.id.spinnerCategory);
 
-        // ★ ডেটাবেস থেকে ক্যাটাগরি লোড করা
+        // ★ ডেটাবেস থেকে ক্যাটাগরি লোড করা (পপ-আপ ছাড়া)
         List<String> categoryList = new ArrayList<>();
         ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categoryList);
         spinnerCategory.setAdapter(catAdapter);
@@ -54,15 +54,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                 categoryList.add(c.name);
             }
             catAdapter.notifyDataSetChanged();
-        });
-
-        // ★ Manage Categories অপশন (একটি ডায়ালগের মাধ্যমে)
-        spinnerCategory.setOnClickListener(v -> {
-            new android.app.AlertDialog.Builder(this)
-                .setTitle("Manage Categories")
-                .setMessage("নতুন ক্যাটাগরি যোগ বা ডিলিট করতে চান?")
-                .setPositiveButton("Yes", (d, w) -> startActivity(new android.content.Intent(this, ManageCategoryActivity.class)))
-                .setNegativeButton("No", null).show();
         });
 
         // এডিট মোড চেক
