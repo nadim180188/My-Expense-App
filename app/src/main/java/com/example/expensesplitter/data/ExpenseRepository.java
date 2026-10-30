@@ -14,7 +14,7 @@ public class ExpenseRepository {
     public final MemberDao members;
     public final ExpenseDao expenses;
     public final SettlementDao settlements;
-    public final CategoryDao categories; // ★ নতুন
+    public final CategoryDao categories;
 
     public ExpenseRepository(Context ctx) {
         AppDatabase db = AppDatabase.get(ctx);
@@ -22,24 +22,16 @@ public class ExpenseRepository {
         members = db.memberDao();
         expenses = db.expenseDao();
         settlements = db.settlementDao();
-        categories = db.categoryDao(); // ★ নতুন
+        categories = db.categoryDao();
     }
 
-    public LiveData<List<GroupWithExpense>> allGroupsWithTotal() {
-        return groups.getAllWithTotal();
-    }
-
-    public void deleteGroupById(long groupId) {
-        groups.deleteById(groupId);
-    }
-
-    public void deleteExpenseById(long expenseId) {
-        expenses.deleteById(expenseId);
-    }
-
-    public void markExpensesAsSettled(List<Long> ids) {
-        expenses.markAsSettled(ids);
-    }
+    public LiveData<List<GroupWithExpense>> allGroupsWithTotal() { return groups.getAllWithTotal(); }
+    public void deleteGroupById(long groupId) { groups.deleteById(groupId); }
+    public void deleteExpenseById(long expenseId) { expenses.deleteById(expenseId); }
+    
+    public void markExpensesAsSettled(List<Long> ids) { expenses.markAsSettled(ids); }
+    public void markAllAsSettled(long gid) { expenses.markAllAsSettled(gid); }
+    public List<ExpenseEntity> getExpensesByIds(List<Long> ids) { return expenses.getExpensesByIds(ids); }
 
     public LiveData<List<MemberEntity>> membersOf(long gid) { return members.ofGroup(gid); }
     public LiveData<List<ExpenseEntity>> expensesOf(long gid) { return expenses.ofGroup(gid); }
@@ -49,7 +41,6 @@ public class ExpenseRepository {
     public LiveData<List<CategorySum>> getCategorySums(long gid) { return expenses.getCategorySums(gid); }
     public LiveData<List<DateSum>> getDateSums(long gid) { return expenses.getDateSums(gid); }
 
-    // ★ নতুন ক্যাটাগরি মেথড
     public LiveData<List<CategoryEntity>> getCategories() { return categories.getAll(); }
     public void addCategory(CategoryEntity c) { categories.insert(c); }
     public void deleteCategoryById(long id) { categories.deleteById(id); }
