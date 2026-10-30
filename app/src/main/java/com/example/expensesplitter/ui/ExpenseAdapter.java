@@ -1,5 +1,6 @@
 package com.example.expensesplitter.ui;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,14 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         String category = e.category != null ? e.category : "অন্যান্য";
         h.category.setText(category + " • ");
 
+        // ★ এখানে isSettled চেক করা হচ্ছে
+        if (e.isSettled) {
+            h.status.setText("Settlement");
+            h.status.setTextColor(Color.parseColor("#4CAF50")); // সবুজ রঙ
+        } else {
+            h.status.setText(""); // খালি
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(e.createdAt);
         
@@ -61,21 +70,28 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         h.btnEdit.setOnClickListener(v -> editListener.onEdit(e));
         h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(e));
 
+        // ★ Fade + Slide Left অ্যানিমেশন
         h.itemView.setTranslationX(200f);
         h.itemView.setAlpha(0f);
-        h.itemView.animate().translationX(0f).alpha(1f).setDuration(400).setStartDelay(pos * 60L).start();
+        h.itemView.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(400)
+                .setStartDelay(pos * 60L)
+                .start();
     }
 
     @Override public int getItemCount() { return list.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView title, category, amount, dateDay, dateMonth, time;
+        TextView title, category, status, amount, dateDay, dateMonth, time;
         ImageView btnEdit, btnDelete;
         
         VH(View v) {
             super(v);
             title = v.findViewById(R.id.tvTitle);
             category = v.findViewById(R.id.tvCategory);
+            status = v.findViewById(R.id.tvStatus); 
             amount = v.findViewById(R.id.tvAmount);
             dateDay = v.findViewById(R.id.tvDateDay);
             dateMonth = v.findViewById(R.id.tvDateMonth);
@@ -85,7 +101,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         }
     }
 
-    // ★ নতুন সার্চ ফিল্টার (নাম এবং ক্যাটাগরি দুটোই খুঁজবে)
+    // সার্চ ফিল্টার (নাম এবং ক্যাটাগরি দুটোই খুঁজবে)
     @Override
     public Filter getFilter() {
         return expenseFilter;
