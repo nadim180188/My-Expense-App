@@ -3,6 +3,8 @@ package com.example.expensesplitter.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -12,8 +14,9 @@ import com.example.expensesplitter.data.entity.ExpenseEntity;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
+public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> implements Filterable {
     private final List<ExpenseEntity> list = new ArrayList<>();
+    private final List<ExpenseEntity> listFull = new ArrayList<>();
     private final OnExpenseEditListener editListener;
     private final OnExpenseDeleteListener deleteListener;
 
@@ -28,6 +31,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
     public void submit(List<ExpenseEntity> data) {
         list.clear();
         list.addAll(data);
+        listFull.clear();
+        listFull.addAll(data);
         notifyDataSetChanged();
     }
 
@@ -42,14 +47,12 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
         ExpenseEntity e = list.get(pos);
         h.title.setText(e.title);
         
-        // ক্যাটাগরি সেট করা
         String category = e.category != null ? e.category : "অন্যান্য";
         h.category.setText(category + " • ");
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(e.createdAt);
         
-        // তারিখ ও সময় সেট
         h.dateDay.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
         h.dateMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime()));
         h.time.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(cal.getTime()));
@@ -58,15 +61,9 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
         h.btnEdit.setOnClickListener(v -> editListener.onEdit(e));
         h.btnDelete.setOnClickListener(v -> deleteListener.onDelete(e));
 
-        // ★ Fade + Slide Left অ্যানিমেশন
-        h.itemView.setTranslationX(200f); // ডান দিক থেকে শুরু করবে
-        h.itemView.setAlpha(0f);          // অদৃশ্য থাকবে
-        h.itemView.animate()
-                .translationX(0f)         // নিজের জায়গায় আসবে
-                .alpha(1f)                // দৃশ্যমান হবে
-                .setDuration(400)
-                .setStartDelay(pos * 60L) // একটার পর একটা আসবে
-                .start();
+        h.itemView.setTranslationX(200f);
+        h.itemView.setAlpha(0f);
+        h.itemView.animate().translationX(0f).alpha(1f).setDuration(400).setStartDelay(pos * 60L).start();
     }
 
     @Override public int getItemCount() { return list.size(); }
@@ -87,4 +84,38 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
             btnDelete = v.findViewById(R.id.btnDelete);
         }
     }
+
+    // ★ নতুন সার্চ ফিল্টার (নাম এবং ক্যাটাগরি দুটোই খুঁজবে)
+    @Override
+    public Filter getFilter() {
+        return expenseFilter;
+    }
+
+    private final Filter expenseFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<ExpenseEntity> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(listFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (ExpenseEntity item : listFull) {
+                    if (item.title.toLowerCase().contains(filterPattern) || 
+                        (item.category != null && item.category.toLowerCase().contains(filterPattern))) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            list.clear();
+            list.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 }
