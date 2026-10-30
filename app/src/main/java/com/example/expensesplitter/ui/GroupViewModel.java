@@ -11,6 +11,10 @@ import java.util.List;
 public class GroupViewModel extends AndroidViewModel {
     private final ExpenseRepository repo;
 
+    public LiveData<List<com.example.expensesplitter.model.DateSum>> getDateSums(long gid) {
+        return repo.getDateSums(gid);
+    }
+
 
     public LiveData<List<com.example.expensesplitter.model.CategorySum>> getCategorySums(long gid) {
         return repo.getCategorySums(gid);
