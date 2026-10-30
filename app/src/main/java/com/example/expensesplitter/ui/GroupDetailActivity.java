@@ -1,6 +1,7 @@
 package com.example.expensesplitter.ui;
 
 import android.os.Bundle;
+import android.widget.EditText; // ★ এই ইমপোর্টটি মিসিং ছিল
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,21 +37,12 @@ public class GroupDetailActivity extends AppCompatActivity {
             TextView tvTotal = findViewById(R.id.tvTotal);
             TextView tvPaid = findViewById(R.id.tvPaid);
             TextView tvDue = findViewById(R.id.tvDue);
-            
             CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
             BarChartView barChart = findViewById(R.id.barChart);
 
             rv = findViewById(R.id.recyclerView);
             rv.setLayoutManager(new LinearLayoutManager(this));
             
-           EditText etSearchExpense = findViewById(R.id.etSearchExpense);
-            etSearchExpense.addTextChangedListener(new android.text.TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                expenseAdapter.getFilter().filter(s);
-            }
-            @Override public void afterTextChanged(android.text.Editable s) {}
-        });
             expenseAdapter = new ExpenseAdapter(
                 expense -> {
                     android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
@@ -91,6 +83,18 @@ public class GroupDetailActivity extends AppCompatActivity {
             
             balanceAdapter = new BalanceAdapter();
             rv.setAdapter(expenseAdapter);
+
+            // ★ সার্চ বার লজিক
+            EditText etSearchExpense = findViewById(R.id.etSearchExpense);
+            if (etSearchExpense != null) {
+                etSearchExpense.addTextChangedListener(new android.text.TextWatcher() {
+                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        expenseAdapter.getFilter().filter(s);
+                    }
+                    @Override public void afterTextChanged(android.text.Editable s) {}
+                });
+            }
 
             TabLayout tabLayout = findViewById(R.id.tabLayout);
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
