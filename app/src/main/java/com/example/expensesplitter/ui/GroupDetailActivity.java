@@ -1,6 +1,5 @@
 package com.example.expensesplitter.ui;
 
-import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,35 +36,11 @@ public class GroupDetailActivity extends AppCompatActivity {
             TextView tvTotal = findViewById(R.id.tvTotal);
             TextView tvPaid = findViewById(R.id.tvPaid);
             TextView tvDue = findViewById(R.id.tvDue);
+            CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
+            BarChartView barChart = findViewById(R.id.barChart);
 
             rv = findViewById(R.id.recyclerView);
             rv.setLayoutManager(new LinearLayoutManager(this));
-
-            // onCreate এর ভেতরে, অন্যান্য findViewById এর সাথে:
-        CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
-        BarChartView barChart = findViewById(R.id.barChart);
-
-        vm.getDateSums(groupId).observe(this, dateSums -> {
-            if (barChart != null && dateSums != null) {
-                java.util.List<Float> values = new java.util.ArrayList<>();
-                java.util.List<String> labels = new java.util.ArrayList<>();
-                
-                // যদি অনেক ডেটা থাকে, তবে শেষ ৭ দিন দেখাতে পারি
-                int size = Math.min(dateSums.size(), 7);
-                for (int i = 0; i < size; i++) {
-                    values.add((float) dateSums.get(i).totalAmount);
-                    labels.add(dateSums.get(i).date); // ০১, ০২, ০৩...
-                }
-                barChart.setData(values, labels);
-            }
-        });
-
-// vm.settlements(...) এর ঠিক নিচে এই লাইনটি যোগ করুন:
-        vm.getCategorySums(groupId).observe(this, categorySums -> {
-            if (categoryChart != null) {
-                categoryChart.setData(categorySums);
-            }
-        });
             
             expenseAdapter = new ExpenseAdapter(
                 expense -> {
@@ -135,11 +110,9 @@ public class GroupDetailActivity extends AppCompatActivity {
                 for (SettlementEntity s : settlements.get()) if ("PAID".equals(s.type)) totalPaid += s.amount;
                 
                 double totalDue = totalExp - totalPaid;
-                
-                // ★ এখানে অ্যানিমেশন মেথড কল করা হলো
-                animateValue(tvTotal, totalExp);
-                animateValue(tvPaid, totalPaid);
-                animateValue(tvDue, totalDue);
+                tvTotal.setText("৳" + totalExp);
+                tvPaid.setText("৳" + totalPaid);
+                tvDue.setText("৳" + totalDue);
             };
 
             vm.members(groupId).observe(this, m -> { members.set(m); recompute.run(); });
@@ -153,6 +126,27 @@ public class GroupDetailActivity extends AppCompatActivity {
                 settlements.set(s); 
                 settlementAdapter.submit(s); 
                 recompute.run(); 
+            });
+
+            // ★ ক্যাটাগরি পাই চার্ট ডেটা
+            vm.getCategorySums(groupId).observe(this, categorySums -> {
+                if (categoryChart != null) {
+                    categoryChart.setData(categorySums);
+                }
+            });
+
+            // ★ মান্থলি বার চার্ট ডেটা
+            vm.getDateSums(groupId).observe(this, dateSums -> {
+                if (barChart != null && dateSums != null) {
+                    List<Float> values = new ArrayList<>();
+                    List<String> labels = new ArrayList<>();
+                    int size = Math.min(dateSums.size(), 7);
+                    for (int i = 0; i < size; i++) {
+                        values.add((float) dateSums.get(i).totalAmount);
+                        labels.add(dateSums.get(i).date); 
+                    }
+                    barChart.setData(values, labels);
+                }
             });
 
             findViewById(R.id.fabAdd).setOnClickListener(v -> {
@@ -184,23 +178,5 @@ public class GroupDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Activity Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-    }
-
-    // ★ ০ থেকে আসল সংখ্যায় কাউন্ট হওয়ার অ্যানিমেশন মেথড
-    private void animateValue(TextView textView, double targetValue) {
-        // যদি আগের কোনো অ্যানিমেশন চলে, তবে সেটা বন্ধ করে দিবে
-        if (textView.getTag() instanceof ValueAnimator) {
-            ((ValueAnimator) textView.getTag()).cancel();
-        }
-
-        ValueAnimator animator = ValueAnimator.ofFloat(0f, (float) targetValue);
-        animator.setDuration(1000); // ১ সেকেন্ড সময় নিবে
-        animator.addUpdateListener(animation -> {
-            float animatedValue = (float) animation.getAnimatedValue();
-            textView.setText(String.format(Locale.US, "৳%.1f", animatedValue));
-        });
-        
-        textView.setTag(animator);
-        animator.start();
     }
 }
