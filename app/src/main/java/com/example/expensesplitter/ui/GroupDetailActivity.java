@@ -38,8 +38,6 @@ public class GroupDetailActivity extends AppCompatActivity {
             TextView tvPaid = findViewById(R.id.tvPaid);
             TextView tvDue = findViewById(R.id.tvDue);
             CategoryPieChartView categoryChart = findViewById(R.id.categoryPieChart);
-            
-            // ★ এখানে BarChartView এর জায়গায় LineChartView ব্যবহার করা হলো
             LineChartView lineChart = findViewById(R.id.lineChart);
 
             rv = findViewById(R.id.recyclerView);
@@ -150,7 +148,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 }
             });
 
-            // ★ লাইন চার্টে ডেটা পাঠানো
+            // লাইন চার্টে ডেটা পাঠানো
             vm.getDateSums(groupId).observe(this, dateSums -> {
                 if (lineChart != null && dateSums != null) {
                     List<Float> expensesList = new ArrayList<>();
@@ -159,13 +157,13 @@ public class GroupDetailActivity extends AppCompatActivity {
                     int size = Math.min(dateSums.size(), 7);
                     for (int i = 0; i < size; i++) {
                         expensesList.add((float) dateSums.get(i).totalAmount);
-                        settlementsList.add(0f); // আপাতত শোধের ডেটা 0 (পরে ডেটাবেস থেকে আসবে)
+                        settlementsList.add(0f);
                     }
                     lineChart.setData(expensesList, settlementsList);
                 }
             });
 
-            // টোটাল সেটেলমেন্ট বাটন
+            // ★ টোটাল সেটেলমেন্ট বাটনের কাজ
             findViewById(R.id.btnSettleAll).setOnClickListener(v -> {
                 double totalExp = 0, totalPaid = 0;
                 for (ExpenseEntity e : expenses.get()) totalExp += e.amount;
@@ -184,6 +182,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "সব বাকি পরিশোধ করা হয়েছে!", Toast.LENGTH_SHORT).show();
             });
 
+            // + বাটন
             findViewById(R.id.fabAdd).setOnClickListener(v -> {
                 String[] options = {"খরচ যোগ করুন (Expense)", "টাকা শোধ করুন (Settlement)"};
                 new android.app.AlertDialog.Builder(this)
@@ -201,6 +200,7 @@ public class GroupDetailActivity extends AppCompatActivity {
                         }).show();
             });
 
+            // PDF শেয়ার বাটন
             findViewById(R.id.btnSharePdf).setOnClickListener(v -> {
                 try {
                     PdfGenerator.generateAndShare(this, getIntent().getStringExtra("GROUP_NAME"), expenses.get(), settlements.get());
