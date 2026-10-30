@@ -51,12 +51,12 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         String category = e.category != null ? e.category : "অন্যান্য";
         h.category.setText(category + " • ");
 
-        // ★ এখানে isSettled চেক করা হচ্ছে
+        // ★ সেটেলমেন্ট স্ট্যাটাস চেক
         if (e.isSettled) {
             h.status.setText("Settlement");
-            h.status.setTextColor(Color.parseColor("#4CAF50")); // সবুজ রঙ
+            h.status.setTextColor(Color.parseColor("#4CAF50"));
         } else {
-            h.status.setText(""); // খালি
+            h.status.setText("");
         }
 
         Calendar cal = Calendar.getInstance();
@@ -101,7 +101,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> impl
         }
     }
 
-    // সার্চ ফিল্টার (নাম এবং ক্যাটাগরি দুটোই খুঁজবে)
+    // সার্চ ফিল্টার
     @Override
     public Filter getFilter() {
         return expenseFilter;
